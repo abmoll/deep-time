@@ -28,8 +28,8 @@ const MAX=13.8e9, MAXSPAN=MAX*1.04, MIN_SPAN=1, ZF=1.75; // all times are "years
 const NOW=(()=>{const d=new Date(),y=d.getFullYear(),a=new Date(y,0,1);return y+(d-a)/(new Date(y+1,0,1)-a)})();
 const cal=(y,m=1,d=1)=>y+(Date.UTC(y,m-1,d)-Date.UTC(y,0,1))/(Date.UTC(y+1,0,1)-Date.UTC(y,0,1)); // fractional CE year
 const ago=y=>NOW-y, bce=n=>1-n; // astronomical year of n BCE
-const eras=[["Cosmos",13.8e9,"#5b6cff"],["Earth",4.54e9,"#2fa3a8"],["Life",3.8e9,"#4cc46a"],["Humanity",3e5,"#ffb347"]];
-const CORE="Big Bang|First stars|Milky Way forms|Sun forms|Earth forms|First life|Great Oxygenation|Cambrian explosion|First dinosaurs|Dinosaur extinction|Homo sapiens|Agriculture|Writing|Industrial Revolution|Moon landing".split("|");
+const eras=[["Cosmos",13.8e9,"#5b6cff"],["Earth",4.54e9,"#2fa3a8"],["Life",3.8e9,"#4cc46a"],["Humanity",3e5,"#ffb347"],["Modern Era",ago(1500),"#e06bc8"]];
+const CORE="Big Bang|First stars|Milky Way forms|Sun forms|Earth forms|First life|Great Oxygenation|Cambrian explosion|First dinosaurs|Dinosaur extinction|Homo sapiens|Agriculture|Writing|Roman Empire|Printing press|Industrial Revolution|Moon landing".split("|");
 const E=(n,t,txt,era,date,end)=>({n,t,txt,era,date,end,rank:CORE.includes(n)?1:2}); // rank 1 = headline events, placed first when crowded
 const ev=[
 // Cosmos
@@ -76,7 +76,7 @@ E("Homo sapiens",3e5,"Anatomically modern humans appear in Africa.","Humanity"),
 E("Out of Africa",70e3,"A major migration of Homo sapiens out of Africa begins to populate the rest of the world.","Humanity","c. 70,000 years ago"),
 E("Cave art",45e3,"People begin painting animals and signs on cave walls in Europe and Southeast Asia.","Humanity","c. 45,000 years ago"),
 E("Lascaux",17e3,"Artists paint the famous halls of bulls and horses at Lascaux in what is now France.","Humanity","c. 17,000 years ago"),
-E("Reaching the Americas",16e3,"People reach the Americas and spread throughout the continents.","Humanity","c. 16,000 years ago"),
+E("First Humans in the Americas",16e3,"The first humans reach the Americas and spread throughout the continents.","Humanity","c. 16,000 years ago"),
 E("Dogs domesticated",15e3,"Wolves are domesticated, becoming the first animals to live alongside humans.","Humanity","c. 15,000 years ago"),
 E("End of the Ice Age",11700,"The Pleistocene glaciations end and the Holocene, our current warm epoch, begins.","Humanity","c. 11,700 years ago"),
 E("Göbekli Tepe",ago(bce(9500)),"Hunter-gatherers raise carved-stone monuments at Göbekli Tepe in Anatolia.","Humanity","c. 9500 BCE"),
@@ -86,22 +86,52 @@ E("Bronze Age",ago(bce(3300)),"Societies in Mesopotamia and beyond begin making 
 E("Writing",ago(bce(3200)),"Cuneiform writing emerges in Mesopotamia.","Humanity","c. 3200 BCE"),
 E("Pyramids of Giza",ago(bce(2560)),"The Great Pyramid of Khufu is completed at Giza, Egypt.","Humanity","c. 2560 BCE"),
 E("Buddha and Confucius",ago(bce(500)),"The Buddha and Confucius teach in India and China, part of a wider flowering of philosophy.","Humanity","c. 500 BCE"),
-E("Roman Empire",ago(cal(-26,1,16)),"Octavian is granted the title Augustus, becoming the first Roman emperor.","Humanity","January 16, 27 BCE"),
-E("Fall of Western Rome",ago(cal(476,9,4)),"Romulus Augustulus, the last Western Roman emperor, is deposed by Odoacer.","Humanity","September 4, 476 CE"),
+E("Founding of Rome",ago(cal(bce(753),4,21)),"According to tradition, Romulus founds the city of Rome on April 21, 753 BCE — the legendary date still marked as Rome's birthday.","Humanity","April 21, 753 BCE (traditional)"),
+E("First burials",100e3,"The earliest widely accepted intentional human burials appear, at sites such as Qafzeh and Skhul.","Humanity","c. 100,000 years ago"),
+E("Shell beads",75e3,"People in southern Africa, at sites such as Blombos Cave, pierce and wear shell beads as some of the earliest known jewelry.","Humanity","c. 75,000 years ago"),
+E("Toba eruption",74e3,"The Toba supervolcano in Sumatra erupts in one of the largest eruptions of the Quaternary, with debated effects on human populations.","Humanity","c. 74,000 years ago"),
+E("Neanderthal extinction",40e3,"Neanderthals disappear from the fossil record, leaving Homo sapiens as the last surviving human species.","Humanity","c. 40,000 years ago"),
+E("First pottery",20e3,"Hunter-gatherers in East Asia, at sites such as Xianrendong Cave, make the earliest known pottery.","Humanity","c. 20,000 years ago"),
+E("The wheel",ago(bce(3500)),"The wheel is invented in Mesopotamia, first used for pottery and soon after for vehicles.","Humanity","c. 3500 BCE"),
+E("Sargon of Akkad",ago(bce(2334)),"Sargon of Akkad founds what is often called the first empire, uniting city-states of Mesopotamia under Akkadian rule.","Humanity","c. 2334 BCE"),
+E("Code of Hammurabi",ago(bce(1754)),"King Hammurabi of Babylon issues one of the earliest and most complete written law codes.","Humanity","c. 1754 BCE"),
+E("Iron Age",ago(bce(1200)),"Iron working spreads in the eastern Mediterranean and Near East, beginning the Iron Age.","Humanity","c. 1200 BCE"),
+E("Athenian democracy",ago(bce(508)),"Cleisthenes' reforms in Athens establish a form of citizen democracy that will shape later political thought.","Humanity","508 BCE"),
+E("Alexander the Great",ago(bce(330)),"Alexander the Great completes the conquest of the Persian Empire, spreading Greek culture from Greece to the Indus.","Humanity","c. 330 BCE"),
+E("Qin unifies China",ago(bce(221)),"Qin Shi Huang unifies warring states into the first Chinese empire and standardizes writing, currency, and measures.","Humanity","221 BCE"),
+E("Silk Road",ago(bce(130)),"The Han dynasty opens regular trade routes across Central Asia, beginning the Silk Road linking China to the Mediterranean world.","Humanity","c. 130 BCE"),
+E("Birth of Islam",ago(610),"Muhammad receives his first revelations in Mecca, marking the beginning of Islam.","Humanity","610 CE"),
+E("Mongol Empire",ago(1206),"Temüjin is proclaimed Genghis Khan, founding the Mongol Empire, later the largest contiguous land empire in history.","Humanity","1206"),
+E("Roman Empire",ago(cal(-26,1,16)),"Octavian is granted the title Augustus in 27 BCE, founding the Roman Empire, which endures in the West until Romulus Augustulus is deposed in 476 CE.","Humanity","January 16, 27 BCE – September 4, 476 CE",ago(cal(476,9,4))),
 E("Magna Carta",ago(cal(1215,6,15)),"English barons force King John to accept the Magna Carta, a landmark in the rule of law.","Humanity","June 15, 1215"),
 E("Black Death",ago(1347),"The Black Death reaches Europe and kills roughly a third of the population.","Humanity","1347"),
 E("Printing press",ago(1440),"Johannes Gutenberg develops movable-type printing in Mainz.","Humanity","c. 1440"),
 E("Columbus reaches the Americas",ago(cal(1492,10,12)),"Christopher Columbus makes landfall in the Bahamas.","Humanity","October 12, 1492"),
-E("Scientific Revolution",ago(1543),"Nicolaus Copernicus publishes On the Revolutions of the Heavenly Spheres, a starting point of the Scientific Revolution.","Humanity","1543"),
-E("Newton's Principia",ago(cal(1687,7,5)),"Isaac Newton publishes his laws of motion and universal gravitation.","Humanity","July 5, 1687"),
-E("Industrial Revolution",ago(1760),"Steam power and machines transform how humans live and work.","Humanity","c. 1760"),
-E("First powered flight",ago(cal(1903,12,17)),"The Wright brothers fly at Kitty Hawk, North Carolina.","Humanity","December 17, 1903"),
-E("World War II",ago(cal(1939,9,1)),"The deadliest conflict in history, from the invasion of Poland to Japan's formal surrender.","Humanity","September 1, 1939 – September 2, 1945",ago(cal(1945,9,2))),
-E("Sputnik 1",ago(cal(1957,10,4)),"The Soviet Union launches the first artificial satellite, starting the Space Age.","Humanity","October 4, 1957"),
-E("Moon landing",ago(cal(1969,7,20)),"Apollo 11 astronauts walk on the Moon.","Humanity","July 20, 1969"),
-E("Fall of the Berlin Wall",ago(cal(1989,11,9)),"The border between East and West Berlin opens.","Humanity","November 9, 1989"),
-E("World Wide Web",ago(cal(1991,8,6)),"Tim Berners-Lee makes the Web publicly available.","Humanity","August 6, 1991"),
-E("Smartphones",ago(cal(2007,1,9)),"Apple introduces the iPhone, ushering in the era of the smartphone.","Humanity","January 9, 2007")
+E("Scientific Revolution",ago(1543),"Nicolaus Copernicus publishes On the Revolutions of the Heavenly Spheres, a starting point of the Scientific Revolution.","Modern Era","1543"),
+E("Newton's Principia",ago(cal(1687,7,5)),"Isaac Newton publishes his laws of motion and universal gravitation.","Modern Era","July 5, 1687"),
+E("Industrial Revolution",ago(1760),"Steam power and machines transform how humans live and work.","Modern Era","c. 1760"),
+E("First powered flight",ago(cal(1903,12,17)),"The Wright brothers fly at Kitty Hawk, North Carolina.","Modern Era","December 17, 1903"),
+E("World War II",ago(cal(1939,9,1)),"The deadliest conflict in history, from the invasion of Poland to Japan's formal surrender.","Modern Era","September 1, 1939 – September 2, 1945",ago(cal(1945,9,2))),
+E("Sputnik 1",ago(cal(1957,10,4)),"The Soviet Union launches the first artificial satellite, starting the Space Age.","Modern Era","October 4, 1957"),
+E("Moon landing",ago(cal(1969,7,20)),"Apollo 11 astronauts walk on the Moon.","Modern Era","July 20, 1969"),
+E("Fall of the Berlin Wall",ago(cal(1989,11,9)),"The border between East and West Berlin opens.","Modern Era","November 9, 1989"),
+E("World Wide Web",ago(cal(1991,8,6)),"Tim Berners-Lee makes the Web publicly available.","Modern Era","August 6, 1991"),
+E("Smartphones",ago(cal(2007,1,9)),"Apple introduces the iPhone, ushering in the era of the smartphone.","Modern Era","January 9, 2007"),
+// Modern Era additions
+E("Protestant Reformation",ago(cal(1517,10,31)),"Martin Luther posts his Ninety-five Theses in Wittenberg, launching the Protestant Reformation.","Modern Era","October 31, 1517"),
+E("First circumnavigation",ago(cal(1522,9,6)),"Juan Sebastián Elcano and the survivors of Magellan's expedition complete the first circumnavigation of the Earth.","Modern Era","September 6, 1522"),
+E("Galileo's telescope",ago(cal(1609,8,25)),"Galileo Galilei turns a telescope to the night sky, revealing mountains on the Moon and, soon after, the moons of Jupiter.","Modern Era","1609"),
+E("Declaration of Independence",ago(cal(1776,7,4)),"The American colonies adopt the Declaration of Independence, creating a new republic and inspiring later democratic movements.","Modern Era","July 4, 1776"),
+E("French Revolution",ago(cal(1789,7,14)),"The French Revolution begins with the storming of the Bastille, overthrowing the monarchy and spreading ideas of citizenship and rights.","Modern Era","July 14, 1789"),
+E("Smallpox vaccine",ago(cal(1796,5,14)),"Edward Jenner inoculates James Phipps with cowpox, demonstrating the first successful vaccine.","Modern Era","May 14, 1796"),
+E("Origin of Species",ago(cal(1859,11,24)),"Charles Darwin publishes On the Origin of Species, setting out the theory of evolution by natural selection.","Modern Era","November 24, 1859"),
+E("Electric light",ago(cal(1879,10,21)),"Thomas Edison demonstrates a practical incandescent light bulb, opening the way to electric lighting.","Modern Era","October 21, 1879"),
+E("Theory of relativity",ago(cal(1905,9,26)),"Albert Einstein publishes special relativity, transforming ideas of space, time, and energy.","Modern Era","September 26, 1905"),
+E("World War I",ago(cal(1914,7,28)),"The First World War engulfs Europe and beyond, redrawing maps and setting the stage for later global conflict.","Modern Era","July 28, 1914 – November 11, 1918",ago(cal(1918,11,11))),
+E("Penicillin",ago(cal(1928,9,28)),"Alexander Fleming discovers penicillin, the first widely used antibiotic.","Modern Era","September 28, 1928"),
+E("First nuclear weapon",ago(cal(1945,7,16)),"The Trinity test in New Mexico detonates the first nuclear weapon, ushering in the atomic age.","Modern Era","July 16, 1945"),
+E("DNA double helix",ago(cal(1953,4,25)),"James Watson and Francis Crick publish the double-helix structure of DNA, explaining how genetic information is stored.","Modern Era","April 25, 1953"),
+E("Human Genome Project",ago(cal(2003,4,14)),"The Human Genome Project completes a nearly full map of the human genetic code.","Modern Era","April 14, 2003")
 ].sort((a,b)=>b.t-a.t);
 const c=document.getElementById('c'),x=c.getContext('2d'),panel=document.getElementById('panel');
 let W,H,L,R; // view edges in years ago; L = left (older), R = right (newer)
@@ -177,7 +207,8 @@ function draw(){if(!W)return;x.clearRect(0,0,W,H);
  const mid=Math.min(MAX,Math.max(0,tx(W/2)));let cur=eras.filter(e=>e[1]>=mid).map(e=>e[0]);if(!cur.length)cur=["Cosmos"];
  const lo=Math.max(R,0),hi=Math.min(L,MAX),ptl=t=>calMode?(t<.5?"Now":yearLabel(Math.floor(NOW-t),NOW-hi<1)):fmtAgo(t,(hi-lo)/50);
  const view="Viewing: <b>"+spanText(Math.max(0,hi-lo))+"</b> <span class=r>("+ptl(hi)+" → "+ptl(lo)+")</span>";
- document.getElementById('crumb').innerHTML=eraFocus?("Focus: <span>"+eraFocus+"</span> <span class=showall title=\"Reset to show all eras\">Show all</span> &nbsp;·&nbsp; "+view):cur.map((n,i)=>i==cur.length-1?"<span>"+n+"</span>":n).join(" › ")+" &nbsp;·&nbsp; "+view;
+ const focusLabel=eraFocus==="Modern Era"?"Humanity › <span>Modern Era</span>":"<span>"+eraFocus+"</span>";
+ document.getElementById('crumb').innerHTML=eraFocus?("Focus: "+focusLabel+" <span class=showall title=\"Reset to show all eras\">Show all</span> &nbsp;·&nbsp; "+view):cur.map((n,i)=>i==cur.length-1?"<span>"+n+"</span>":n).join(" › ")+" &nbsp;·&nbsp; "+view;
 }
 function clampView(){const s=L-R;if(s>=MAXSPAN*.9999){fullView();return}const lo=-.05*s,hi=MAX+.05*s;if(R<lo){L+=lo-R;R=lo}if(L>hi){R-=L-hi;L=hi}}
 function cancelAnim(){if(anim){cancelAnimationFrame(anim);anim=0}}
@@ -187,6 +218,9 @@ function animateTo(nL,nR,ms=600){cancelAnim();const sL=L,sR=R,t0=performance.now
 function eraFit(name){
  // Humanity opens on a fixed 300 kya → now window (not a fit of all its events), with left padding so Homo sapiens stays visible
  if(name==="Humanity"){const hi=3e5,lo=0,pad=(hi-lo)*0.08;let nL=hi+pad,nR=lo-pad,s=nL-nR;
+  const loB=-.05*s,hiB=MAX+.05*s;if(nR<loB){nL+=loB-nR;nR=loB}if(nL>hiB){nR-=nL-hiB;nL=hiB}return[nL,nR]}
+ // Modern Era opens on a fixed 1500 CE → now window, with small padding
+ if(name==="Modern Era"){const hi=ago(1500),lo=0,pad=(hi-lo)*0.08;let nL=hi+pad,nR=lo-pad,s=nL-nR;
   const loB=-.05*s,hiB=MAX+.05*s;if(nR<loB){nL+=loB-nR;nR=loB}if(nL>hiB){nR-=nL-hiB;nL=hiB}return[nL,nR]}
  const es=ev.filter(e=>e.era===name),hi=Math.max(...es.map(e=>e.t)),lo=Math.min(...es.map(e=>e.end!=null?e.end:e.t)),pad=(hi-lo)*0.08;
  let nL=hi+pad,nR=lo-pad,s=nL-nR;if(s>=MAXSPAN*.9999)return[MAX*1.02,-MAX*0.02];
@@ -229,8 +263,8 @@ const q=new URLSearchParams(location.search);
 if(/demo=1/.test(location.search+location.hash)){L=7e8;R=-5e8;panel.style.transition="none";open(ev.findIndex(e=>e.n=="Dinosaur extinction"))}
 // arbitrary view for testing/screenshots: ?center=<yearsAgo>|?year=<CE year>&span=<years>
 if(q.has('center')||q.has('year')||q.has('span')){const s=Math.min(MAXSPAN,Math.max(MIN_SPAN,+(q.get('span')||L-R))),m=q.has('year')?NOW-q.get('year'):q.has('center')?+q.get('center'):(L+R)/2;L=m+s/2;R=m-s/2;clampView();draw()}
-// ?focus=life|earth|cosmos|humanity — enter that era's focus immediately (no animation, for screenshots)
-if(q.has('focus')){const n=eras.find(e=>e[0].toLowerCase()===String(q.get('focus')||"").toLowerCase());if(n)setFocus(n[0],false)}
+// ?focus=life|earth|cosmos|humanity|modern — enter that era's focus immediately (no animation, for screenshots)
+if(q.has('focus')){const s=String(q.get('focus')||"").toLowerCase().replace(/\s+/g,""),n=eras.find(e=>{const k=e[0].toLowerCase();return k.replace(/\s+/g,"")===s||k.startsWith(s)});if(n)setFocus(n[0],false)}
 window.DT={get focus(){return eraFocus},get L(){return L},get R(){return R},get sel(){return sel},get hidden(){return hidden},get moved(){return moved},get W(){return W},get H(){return H},
  visible(){return hits.map(h=>ev[h[2]].n)},panelOpen(){return panel.classList.contains('open')},get bandHits(){return bandHits},get hits(){return hits},setFocus,reset,exitFocus,closePanel,draw,eraFit,ev,eras};
 </script></body></html>
