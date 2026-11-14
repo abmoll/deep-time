@@ -1,0 +1,236 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Deep Time</title>
+<style>
+body{margin:0;background:radial-gradient(ellipse at 30% 20%,#1a1f3d 0%,#07080f 60%,#000 100%);color:#e8e6f0;font-family:Georgia,serif;overflow:hidden;height:100vh}
+header{padding:22px 36px 6px}h1{margin:0;font-size:42px;letter-spacing:6px;font-weight:400;background:linear-gradient(90deg,#fff,#9fb4ff,#ffb86b);-webkit-background-clip:text;color:transparent}
+.tag{color:#9aa0c0;font-style:italic;margin-top:4px}
+#bar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:8px 36px 0}
+#crumb{padding:0;flex:1;min-width:0;font-family:system-ui;font-size:14px;color:#b9c3ff;letter-spacing:1px}
+#crumb span{color:#fff;font-weight:600}#crumb b{color:#ffcf8a;font-weight:600}#crumb .r{color:#7f88b8}
+#crumb .showall{color:#ffcf8a;font-weight:500;cursor:pointer;margin-left:10px;font-size:13px;letter-spacing:0;border-bottom:1px solid rgba(255,207,138,.45)}
+#crumb .showall:hover{color:#fff}
+#wrap{position:relative;margin:10px 36px;height:520px;border:1px solid #2a2f55;border-radius:12px;background:rgba(10,12,30,.6);box-shadow:0 0 60px rgba(80,100,255,.15) inset}
+canvas{width:100%;height:100%;cursor:grab;display:block}
+#ctl{position:static;display:flex;gap:6px;flex-shrink:0}
+#ctl button{background:#1c2148;color:#fff;border:1px solid #3d4590;border-radius:6px;padding:6px 12px;font-size:16px;cursor:pointer}
+#panel{position:fixed;top:0;right:-380px;width:340px;height:100%;background:linear-gradient(180deg,#151a3a,#0a0c1c);border-left:1px solid #3d4590;padding:40px 24px;box-sizing:border-box;transition:right .35s;font-family:system-ui;box-shadow:-20px 0 60px #000}
+#panel.open{right:0}#panel h2{font-family:Georgia;font-weight:400;font-size:28px;margin:10px 0}
+#panel .d{color:#ffb86b;font-size:15px;letter-spacing:1px}#panel p{line-height:1.6;color:#c9cbe0}
+#panel .w{margin-top:20px;background:linear-gradient(90deg,#ff7a3d,#ff3d7a);border:0;color:#fff;padding:12px 20px;border-radius:24px;font-size:15px;cursor:pointer}
+#panel .x{position:absolute;top:12px;right:16px;background:none;border:0;color:#aaa;font-size:24px;cursor:pointer}
+</style></head><body>
+<header><h1>DEEP TIME</h1><div class="tag">Zoom through 13.8 billion years</div></header>
+<div id="bar"><div id="crumb"></div><div id="ctl"><button id="zi">+</button><button id="zo">−</button><button id="rs">Reset</button></div></div>
+<div id="wrap"><canvas id="c"></canvas></div>
+<div id="panel"><button class="x" id="px">×</button><div class="d" id="pd"></div><h2 id="pt"></h2><p id="pp"></p><button class="w">▶ Watch the episode</button></div>
+<script>
+const MAX=13.8e9, MAXSPAN=MAX*1.04, MIN_SPAN=1, ZF=1.75; // all times are "years ago" (float64); MIN_SPAN is the deepest zoom
+// NOW = present as a fractional calendar year, so calendar dates map to years-ago exactly
+const NOW=(()=>{const d=new Date(),y=d.getFullYear(),a=new Date(y,0,1);return y+(d-a)/(new Date(y+1,0,1)-a)})();
+const cal=(y,m=1,d=1)=>y+(Date.UTC(y,m-1,d)-Date.UTC(y,0,1))/(Date.UTC(y+1,0,1)-Date.UTC(y,0,1)); // fractional CE year
+const ago=y=>NOW-y, bce=n=>1-n; // astronomical year of n BCE
+const eras=[["Cosmos",13.8e9,"#5b6cff"],["Earth",4.54e9,"#2fa3a8"],["Life",3.8e9,"#4cc46a"],["Humanity",3e5,"#ffb347"]];
+const CORE="Big Bang|First stars|Milky Way forms|Sun forms|Earth forms|First life|Great Oxygenation|Cambrian explosion|First dinosaurs|Dinosaur extinction|Homo sapiens|Agriculture|Writing|Industrial Revolution|Moon landing".split("|");
+const E=(n,t,txt,era,date,end)=>({n,t,txt,era,date,end,rank:CORE.includes(n)?1:2}); // rank 1 = headline events, placed first when crowded
+const ev=[
+// Cosmos
+E("Big Bang",13.8e9,"The universe begins expanding from an extremely hot, dense state.","Cosmos"),
+E("CMB released",13.8e9-3.8e5,"The universe cools enough for atoms to form, and light from this moment still fills the sky as the cosmic microwave background.","Cosmos","380,000 years after the Big Bang"),
+E("First stars",13.6e9,"The first stars ignite, lighting up the young universe.","Cosmos"),
+E("Milky Way forms",13.6e9,"The oldest parts of our galaxy begin assembling from gas and early stars.","Cosmos"),
+E("First supernovae",13.5e9,"The first stars explode as supernovae, seeding the cosmos with carbon, oxygen, and other heavy elements.","Cosmos","c. 13.5 billion years ago"),
+E("First galaxies",13.4e9,"Gravity gathers stars and gas into the first galaxies.","Cosmos","c. 13.4 billion years ago"),
+E("Reionization",12.8e9,"Ultraviolet light from early stars and galaxies ionizes intergalactic hydrogen, ending the cosmic dark ages.","Cosmos","c. 12.8 billion years ago"),
+E("Andromeda forms",12.5e9,"The Andromeda Galaxy, the Milky Way's nearest large neighbor, begins to assemble.","Cosmos","c. 12.5 billion years ago"),
+E("Peak star formation",10e9,"Star formation across the universe reaches its all-time peak, an era often called cosmic noon.","Cosmos","c. 10 billion years ago"),
+E("Sun forms",4.6e9,"A collapsing cloud of gas and dust gives birth to our Sun.","Cosmos"),
+// Earth
+E("Earth forms",4.54e9,"Earth accretes from the disk of debris orbiting the young Sun.","Earth"),
+E("The Moon forms",4.5e9,"A Mars-sized body, Theia, collides with Earth, and the debris coalesces into the Moon.","Earth","c. 4.5 billion years ago"),
+E("Oldest zircons",4.404e9,"Tiny zircon crystals, the oldest known minerals on Earth, form in what is now Australia.","Earth","c. 4.4 billion years ago"),
+E("First oceans",4.4e9,"Liquid water condenses on Earth's cooling surface, forming the first oceans.","Earth","c. 4.4 billion years ago"),
+E("Late Heavy Bombardment",3.9e9,"A wave of asteroid and comet impacts scars the inner solar system, including Earth and the Moon.","Earth","c. 3.9 billion years ago"),
+E("Great Oxygenation",2.4e9,"Photosynthetic cyanobacteria flood the atmosphere with oxygen.","Earth"),
+E("Rodinia",1.1e9,"The supercontinent Rodinia assembles, grouping most of Earth's landmasses.","Earth","c. 1.1 billion years ago"),
+E("Snowball Earth",720e6,"Ice sheets repeatedly reach the equator during the Cryogenian, in episodes known as Snowball Earth.","Earth","c. 720–635 million years ago",635e6),
+E("Pangaea",335e6,"Earth's continents join to form the supercontinent Pangaea.","Earth","c. 335 million years ago"),
+E("Himalayas begin",50e6,"The Indian and Eurasian plates collide, beginning the rise of the Himalayas.","Earth","c. 50 million years ago"),
+// Life
+E("First life",3.8e9,"Simple single-celled microbes appear in Earth's early oceans.","Life"),
+E("Stromatolites",3.5e9,"Microbial mats build the first stromatolites, layered structures still formed by cyanobacteria today.","Life","c. 3.5 billion years ago"),
+E("Eukaryotes",2e9,"Cells with a nucleus — the eukaryotes — appear, later giving rise to plants, animals, and fungi.","Life","c. 2 billion years ago"),
+E("Multicellular life",1.05e9,"Red algae such as Bangiomorpha become among the first complex multicellular organisms.","Life","c. 1.05 billion years ago"),
+E("Ediacaran biota",575e6,"Soft-bodied Ediacaran organisms, some of the first large animals, appear in the oceans.","Life","c. 575 million years ago"),
+E("Cambrian explosion",538e6,"Complex animal life diversifies rapidly in the seas.","Life"),
+E("First vertebrates",500e6,"Jawless fishes, the first vertebrates, swim in the Cambrian and Ordovician seas.","Life","c. 500 million years ago"),
+E("First land plants",470e6,"The first plants colonize the land, beginning with moss-like species along lake and river margins.","Life","c. 470 million years ago"),
+E("First tetrapods",375e6,"Four-limbed vertebrates, the tetrapods, leave the water and begin life on land.","Life","c. 375 million years ago"),
+E("Great Dying",252e6,"The Permian–Triassic extinction, the most severe in Earth's history, wipes out most marine and many land species.","Life","252 million years ago"),
+E("First dinosaurs",230e6,"Dinosaurs emerge in the Triassic and go on to dominate land.","Life"),
+E("First mammals",225e6,"The first mammals evolve from cynodont ancestors in the Late Triassic.","Life","c. 225 million years ago"),
+E("First flowering plants",130e6,"Flowering plants, the angiosperms, appear and later transform terrestrial ecosystems.","Life","c. 130 million years ago"),
+E("Dinosaur extinction",66e6,"An asteroid impact at Chicxulub wipes out the non-avian dinosaurs and about three quarters of species.","Life"),
+E("First primates",55e6,"The first primates appear in the wake of the dinosaur extinction.","Life","c. 55 million years ago"),
+E("First hominins",7e6,"Early hominins, the lineage that will lead to humans, diverge from other African apes.","Life","c. 7 million years ago"),
+// Humanity
+E("Homo sapiens",3e5,"Anatomically modern humans appear in Africa.","Humanity"),
+E("Out of Africa",70e3,"A major migration of Homo sapiens out of Africa begins to populate the rest of the world.","Humanity","c. 70,000 years ago"),
+E("Cave art",45e3,"People begin painting animals and signs on cave walls in Europe and Southeast Asia.","Humanity","c. 45,000 years ago"),
+E("Lascaux",17e3,"Artists paint the famous halls of bulls and horses at Lascaux in what is now France.","Humanity","c. 17,000 years ago"),
+E("Reaching the Americas",16e3,"People reach the Americas and spread throughout the continents.","Humanity","c. 16,000 years ago"),
+E("Dogs domesticated",15e3,"Wolves are domesticated, becoming the first animals to live alongside humans.","Humanity","c. 15,000 years ago"),
+E("End of the Ice Age",11700,"The Pleistocene glaciations end and the Holocene, our current warm epoch, begins.","Humanity","c. 11,700 years ago"),
+E("Göbekli Tepe",ago(bce(9500)),"Hunter-gatherers raise carved-stone monuments at Göbekli Tepe in Anatolia.","Humanity","c. 9500 BCE"),
+E("Agriculture",1.2e4,"Humans begin farming and domesticating plants and animals.","Humanity"),
+E("First cities",ago(bce(3500)),"Uruk and other Mesopotamian settlements grow into the first true cities.","Humanity","c. 3500 BCE (~5,500 years ago)"),
+E("Bronze Age",ago(bce(3300)),"Societies in Mesopotamia and beyond begin making tools and weapons from bronze.","Humanity","c. 3300 BCE"),
+E("Writing",ago(bce(3200)),"Cuneiform writing emerges in Mesopotamia.","Humanity","c. 3200 BCE"),
+E("Pyramids of Giza",ago(bce(2560)),"The Great Pyramid of Khufu is completed at Giza, Egypt.","Humanity","c. 2560 BCE"),
+E("Buddha and Confucius",ago(bce(500)),"The Buddha and Confucius teach in India and China, part of a wider flowering of philosophy.","Humanity","c. 500 BCE"),
+E("Roman Empire",ago(cal(-26,1,16)),"Octavian is granted the title Augustus, becoming the first Roman emperor.","Humanity","January 16, 27 BCE"),
+E("Fall of Western Rome",ago(cal(476,9,4)),"Romulus Augustulus, the last Western Roman emperor, is deposed by Odoacer.","Humanity","September 4, 476 CE"),
+E("Magna Carta",ago(cal(1215,6,15)),"English barons force King John to accept the Magna Carta, a landmark in the rule of law.","Humanity","June 15, 1215"),
+E("Black Death",ago(1347),"The Black Death reaches Europe and kills roughly a third of the population.","Humanity","1347"),
+E("Printing press",ago(1440),"Johannes Gutenberg develops movable-type printing in Mainz.","Humanity","c. 1440"),
+E("Columbus reaches the Americas",ago(cal(1492,10,12)),"Christopher Columbus makes landfall in the Bahamas.","Humanity","October 12, 1492"),
+E("Scientific Revolution",ago(1543),"Nicolaus Copernicus publishes On the Revolutions of the Heavenly Spheres, a starting point of the Scientific Revolution.","Humanity","1543"),
+E("Newton's Principia",ago(cal(1687,7,5)),"Isaac Newton publishes his laws of motion and universal gravitation.","Humanity","July 5, 1687"),
+E("Industrial Revolution",ago(1760),"Steam power and machines transform how humans live and work.","Humanity","c. 1760"),
+E("First powered flight",ago(cal(1903,12,17)),"The Wright brothers fly at Kitty Hawk, North Carolina.","Humanity","December 17, 1903"),
+E("World War II",ago(cal(1939,9,1)),"The deadliest conflict in history, from the invasion of Poland to Japan's formal surrender.","Humanity","September 1, 1939 – September 2, 1945",ago(cal(1945,9,2))),
+E("Sputnik 1",ago(cal(1957,10,4)),"The Soviet Union launches the first artificial satellite, starting the Space Age.","Humanity","October 4, 1957"),
+E("Moon landing",ago(cal(1969,7,20)),"Apollo 11 astronauts walk on the Moon.","Humanity","July 20, 1969"),
+E("Fall of the Berlin Wall",ago(cal(1989,11,9)),"The border between East and West Berlin opens.","Humanity","November 9, 1989"),
+E("World Wide Web",ago(cal(1991,8,6)),"Tim Berners-Lee makes the Web publicly available.","Humanity","August 6, 1991"),
+E("Smartphones",ago(cal(2007,1,9)),"Apple introduces the iPhone, ushering in the era of the smartphone.","Humanity","January 9, 2007")
+].sort((a,b)=>b.t-a.t);
+const c=document.getElementById('c'),x=c.getContext('2d'),panel=document.getElementById('panel');
+let W,H,L,R; // view edges in years ago; L = left (older), R = right (newer)
+let eraFocus=null,anim=0,bandHits=[];
+function fullView(){L=MAX*1.02;R=-MAX*0.02}fullView();
+function size(){const d=devicePixelRatio;W=c.clientWidth;H=c.clientHeight;c.width=W*d;c.height=H*d;x.setTransform(d,0,0,d,0,0);draw()}
+const px=t=>(L-t)/(L-R)*W, tx=p=>L-p/W*(L-R);
+const num=(v,d=0)=>v.toLocaleString('en-US',{maximumFractionDigits:d});
+const UNITS=[[1e9,"Bya"],[1e6,"Mya"],[1e3,"kya"],[1,"ya"]];
+function fmtAgo(t,step){if(t<step/2)return "Now";
+ for(let i=0;i<UNITS.length;i++){const[u,s]=UNITS[i];if(t<u*.999999&&i<3)continue;
+  const d=Math.max(0,Math.ceil(-Math.log10(step/u)-1e-9));if(d>2&&i<3)continue;return num(t/u,d)+" "+s}}
+const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function yearLabel(y,suf){return y>=1?(suf||y<1000?y+" CE":""+y):num(1-y)+" BCE"}
+function fmtLong(e){if(e.date)return e.date;const t=e.t;
+ return t>=1e9?num(t/1e9,2)+" billion years ago":t>=1e6?num(t/1e6,1)+" million years ago":num(t)+" years ago"}
+function spanText(s){const sig=v=>num(Number(v.toPrecision(3)),2);
+ return s>=1e9?sig(s/1e9)+" billion years":s>=1e6?sig(s/1e6)+" million years":s>=1e4?sig(s)+" years":s>=10?num(Math.round(s))+" years":s>=2?num(s,1)+" years":Math.round(s*12)+" months"}
+const STEPS_AGO=[],STEPS_CAL=[1/12,1/4,1/2];
+for(let e=-1;e<=11;e++)for(const m of[1,2,5]){const v=m*10**e;STEPS_AGO.push(v);if(v>=1)STEPS_CAL.push(v)}
+// tick generation: years-ago mode (Bya/Mya/kya) or calendar mode (BCE/CE years, months at the deepest zoom)
+function ticksFor(step,calMode){const out=[],lo=Math.max(R,0),hi=Math.min(L,MAX);if(hi<lo)return out;
+ if(!calMode){for(let k=Math.ceil(lo/step);k<=Math.floor(hi/step);k++){const t=k*step;out.push({t,s:fmtAgo(t,step)})}return out}
+ const yl=NOW-hi,yr=NOW-lo,suf=yl<1;
+ if(step<1){const n=Math.round(step*12);for(let k=Math.ceil(yl*12/n);k<=Math.floor(yr*12/n);k++){const m=k*n,y=Math.floor(m/12),mi=m-y*12;out.push({t:NOW-m/12,s:mi?MON[mi]:yearLabel(y,suf)})}return out}
+ for(let j=Math.max(1,Math.ceil((1-yr)/step));j<=Math.floor((1-yl)/step);j++){const y=1-j*step;out.push({t:NOW-y,s:yearLabel(y,suf)})}
+ if(step>=5&&yl<=1&&yr>=1)out.push({t:NOW-1,s:yearLabel(1,suf)});
+ for(let j=Math.max(1,Math.ceil(yl/step));j<=Math.floor(yr/step);j++){const y=j*step;out.push({t:NOW-y,s:yearLabel(y,suf)})}
+ return out}
+let lastTicks=[],calMode=false,hidden=0;
+function chooseTicks(){const span=L-R,mid=(L+R)/2;calMode=L<25000||(span<=2000&&mid<1e6);
+ const steps=calMode?STEPS_CAL:STEPS_AGO;x.font="12px system-ui";
+ let i=steps.findIndex(s=>span/s<=(s<1/6?12:10));if(i<0)i=steps.length-1;
+ for(;i<steps.length;i++){const tk=ticksFor(steps[i],calMode),mw=Math.max(0,...tk.map(t=>x.measureText(t.s).width));
+  if(steps[i]/span*W>=mw+18||i==steps.length-1)return tk}}
+const stars=[...Array(220)].map(()=>[Math.random(),Math.random(),Math.random()]);
+let hits=[],sel=-1;
+function draw(){if(!W)return;x.clearRect(0,0,W,H);
+ stars.forEach(s=>{x.fillStyle=`rgba(255,255,255,${s[2]*.6})`;x.fillRect(s[0]*W,s[1]*H,s[2]*1.6,s[2]*1.6)});
+ const axY=H-50;x.strokeStyle="#3d4590";x.beginPath();x.moveTo(0,axY);x.lineTo(W,axY);x.stroke();
+ lastTicks=chooseTicks();x.font="12px system-ui";x.textAlign="center";
+ lastTicks.forEach(k=>{const p=px(k.t);x.strokeStyle="rgba(120,140,255,.18)";x.beginPath();x.moveTo(p,20);x.lineTo(p,axY+6);x.stroke();const w=x.measureText(k.s).width/2;if(p>=w+2&&p<=W-w-2){x.fillStyle="#9aa0c0";x.fillText(k.s,p,axY+22)}});
+ const p0=px(0);if(calMode&&p0>=0&&p0<=W){x.strokeStyle="rgba(255,207,138,.35)";x.setLineDash([3,4]);x.beginPath();x.moveTo(p0,20);x.lineTo(p0,axY);x.stroke();x.setLineDash([]);x.fillStyle="#ffcf8a";x.fillText("Now",Math.min(W-16,Math.max(16,p0)),axY+38)}
+ bandHits=[];
+ eras.forEach((e,i)=>{
+  const rawA=px(e[1]),rawB=px(0),y=axY-40-i*34,on=!eraFocus||eraFocus===e[0];
+  const a=Math.max(0,rawA),b=Math.min(W,rawB),vis=rawB>0&&rawA<W&&b>a;
+  x.font="bold 13px system-ui";x.textAlign="left";const tw=x.measureText(e[0]).width,chipW=tw+16,chipH=26;
+  let lx;
+  if(vis&&b-a>=chipW)lx=Math.min(Math.max(a+8,4),W-tw-8);
+  else lx=Math.max(4,Math.min(W-chipW-4, vis?Math.max(a,b-chipW):W-chipW-4));
+  if(vis){const g=x.createLinearGradient(a,0,b,0);g.addColorStop(0,e[2]+(on?"cc":"40"));g.addColorStop(1,e[2]+(on?"55":"18"));x.fillStyle=g;x.beginPath();x.roundRect(a,y,b-a,chipH,6);x.fill()}
+  if(!vis||b-a<chipW){x.fillStyle=e[2]+(on?"dd":"55");x.beginPath();x.roundRect(lx-8,y,chipW,chipH,6);x.fill()}
+  if(on&&eraFocus===e[0]){x.strokeStyle="rgba(255,255,255,.9)";x.lineWidth=2;x.beginPath();if(vis&&b-a>=chipW)x.roundRect(a,y,b-a,chipH,6);else x.roundRect(lx-8,y,chipW,chipH,6);x.stroke();x.lineWidth=1;
+   x.shadowColor=e[2];x.shadowBlur=16;x.strokeStyle=e[2];x.beginPath();if(vis&&b-a>=chipW)x.roundRect(a,y,b-a,chipH,6);else x.roundRect(lx-8,y,chipW,chipH,6);x.stroke();x.shadowBlur=0}
+  x.fillStyle=on?"#fff":"rgba(255,255,255,.42)";x.fillText(e[0],lx,y+18);
+  const hx0=vis?Math.min(a,lx-8):lx-8,hx1=vis?Math.max(b,lx-8+chipW):lx-8+chipW;
+  bandHits.push({a:hx0,b:hx1,y,h:chipH,name:e[0]});
+ });
+ // events: greedy lane packing by real label width, so hidden markers reappear as zoom spreads them out
+ // in focus mode, only that era's events are shown (all of them); overview uses the full set
+ hits=[];hidden=0;const lane=[...Array(5)].map(()=>[]),placed=[];x.textAlign="center";x.font="13px system-ui";
+ const vis=[];ev.forEach((e,i)=>{if(eraFocus&&e.era!==eraFocus)return;const p=px(e.t),q=e.end!=null?px(e.end):p,w=x.measureText(e.n).width,mid=Math.min(W-w/2-4,Math.max(w/2+4,(p+q)/2));
+  if(q<-20||p>W+20)return;vis.push({e,i,p,q,mid,a:Math.min(p,mid-w/2),b:Math.max(q,mid+w/2)})});
+ vis.sort((u,v)=>u.e.rank-v.e.rank||u.i-v.i).forEach(o=>{const k=lane.findIndex(l=>l.every(([a,b])=>o.b+10<a||o.a>b+10));
+  // overview: minor events appear only once zoom creates ~100px of space from any already-placed marker, so the full 13.8 Bya view stays a clean set of majors
+  if(k<0||(!eraFocus&&o.e.rank>1&&placed.some(q=>Math.abs(q-o.p)<100))){hidden++;return}lane[k].push([o.a,o.b]);placed.push(o.p);
+  const y=66+k*44,{e,i,p,q,mid}=o;x.strokeStyle="rgba(255,200,140,.4)";x.beginPath();x.moveTo(p,y+8);x.lineTo(p,axY);x.stroke();
+  if(q!==p){x.fillStyle="rgba(255,184,107,.35)";x.fillRect(p,y-3,q-p,6);x.beginPath();x.moveTo(q,y+4);x.lineTo(q,axY);x.stroke()}
+  x.fillStyle=sel===i?"#ff5f7a":"#ffcf8a";x.shadowColor="#ffb86b";x.shadowBlur=14;x.beginPath();x.arc(p,y,7,0,7);x.fill();x.shadowBlur=0;
+  x.fillStyle="#fff";x.fillText(e.n,mid,y-14);hits.push([p,y,i])});
+ if(hidden){x.textAlign="left";x.font="11px system-ui";x.fillStyle="#7f88b8";x.fillText(`+${hidden} more event${hidden>1?"s":""} — zoom in`,10,H-10)}
+ const mid=Math.min(MAX,Math.max(0,tx(W/2)));let cur=eras.filter(e=>e[1]>=mid).map(e=>e[0]);if(!cur.length)cur=["Cosmos"];
+ const lo=Math.max(R,0),hi=Math.min(L,MAX),ptl=t=>calMode?(t<.5?"Now":yearLabel(Math.floor(NOW-t),NOW-hi<1)):fmtAgo(t,(hi-lo)/50);
+ const view="Viewing: <b>"+spanText(Math.max(0,hi-lo))+"</b> <span class=r>("+ptl(hi)+" → "+ptl(lo)+")</span>";
+ document.getElementById('crumb').innerHTML=eraFocus?("Focus: <span>"+eraFocus+"</span> <span class=showall title=\"Reset to show all eras\">Show all</span> &nbsp;·&nbsp; "+view):cur.map((n,i)=>i==cur.length-1?"<span>"+n+"</span>":n).join(" › ")+" &nbsp;·&nbsp; "+view;
+}
+function clampView(){const s=L-R;if(s>=MAXSPAN*.9999){fullView();return}const lo=-.05*s,hi=MAX+.05*s;if(R<lo){L+=lo-R;R=lo}if(L>hi){R-=L-hi;L=hi}}
+function cancelAnim(){if(anim){cancelAnimationFrame(anim);anim=0}}
+function easeInOut(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2}
+function animateTo(nL,nR,ms=600){cancelAnim();const sL=L,sR=R,t0=performance.now();
+ (function step(now){const u=Math.min(1,(now-t0)/ms),e=easeInOut(u);L=sL+(nL-sL)*e;R=sR+(nR-sR)*e;draw();if(u<1)anim=requestAnimationFrame(step);else{L=nL;R=nR;anim=0;draw()}})(t0)}
+function eraFit(name){
+ // Humanity opens on a fixed 300 kya → now window (not a fit of all its events), with left padding so Homo sapiens stays visible
+ if(name==="Humanity"){const hi=3e5,lo=0,pad=(hi-lo)*0.08;let nL=hi+pad,nR=lo-pad,s=nL-nR;
+  const loB=-.05*s,hiB=MAX+.05*s;if(nR<loB){nL+=loB-nR;nR=loB}if(nL>hiB){nR-=nL-hiB;nL=hiB}return[nL,nR]}
+ const es=ev.filter(e=>e.era===name),hi=Math.max(...es.map(e=>e.t)),lo=Math.min(...es.map(e=>e.end!=null?e.end:e.t)),pad=(hi-lo)*0.08;
+ let nL=hi+pad,nR=lo-pad,s=nL-nR;if(s>=MAXSPAN*.9999)return[MAX*1.02,-MAX*0.02];
+ const loB=-.05*s,hiB=MAX+.05*s;if(nR<loB){nL+=loB-nR;nR=loB}if(nL>hiB){nR-=nL-hiB;nL=hiB}return[nL,nR]}
+function setFocus(name,animate=true){eraFocus=name;const[nL,nR]=eraFit(name);if(animate)animateTo(nL,nR);else{cancelAnim();L=nL;R=nR;draw()}}
+function closePanel(){if(sel<0&&!panel.classList.contains('open'))return;sel=-1;panel.classList.remove('open');draw()}
+function exitFocus(animate=true){eraFocus=null;sel=-1;panel.classList.remove('open');if(animate)animateTo(MAX*1.02,-MAX*0.02);else{cancelAnim();fullView();draw()}}
+// f<1 zooms in; the time under pixel p stays fixed
+function zoom(f,p){cancelAnim();const s=L-R,ns=Math.min(MAXSPAN,Math.max(MIN_SPAN,s*f));if(ns>=MAXSPAN){fullView();draw();return}
+ const t=tx(p),k=ns/s;L=t+(L-t)*k;R=t+(R-t)*k;clampView();draw()}
+function pan(dxPx){cancelAnim();const d=dxPx/W*(L-R);L+=d;R+=d;clampView();draw()}
+function reset(){exitFocus(true)}
+c.addEventListener('wheel',e=>{e.preventDefault();const r=c.getBoundingClientRect(),p=e.clientX-r.left;
+ let dx=e.deltaX,dy=e.deltaY;const m=e.deltaMode===1?33:e.deltaMode===2?H:1;dx*=m;dy*=m;
+ if(!e.ctrlKey&&Math.abs(dx)>Math.abs(dy)){pan(-dx);return} // horizontal trackpad scroll pans
+ let f;if(e.ctrlKey)f=Math.exp(dy*.01);                         // pinch-zoom (ctrl+wheel)
+ else if(Math.abs(dy)>=50)f=Math.pow(ZF,Math.sign(dy)*Math.max(1,Math.round(Math.abs(dy)/100))); // mouse wheel: fixed factor per notch
+ else f=Math.exp(dy*Math.log(ZF)/100);                         // smooth trackpad scroll
+ zoom(f,p)},{passive:false});
+function hitAt(ox,oy){const h=hits.find(h=>Math.hypot(h[0]-ox,h[1]-oy)<14);if(h)return{type:"ev",i:h[2]};const b=bandHits.find(b=>ox>=b.a&&ox<=b.b&&oy>=b.y&&oy<=b.y+b.h);if(b)return{type:"band",name:b.name}}
+let drag=null,moved=0;c.onpointerdown=e=>{drag=e.clientX;moved=0;c.style.cursor="grabbing";c.setPointerCapture(e.pointerId)};
+c.onpointerup=c.onpointercancel=()=>{drag=null;c.style.cursor="grab"};
+c.onpointermove=e=>{
+ if(drag!==null){const dx=e.clientX-drag;drag=e.clientX;moved+=Math.abs(dx);pan(dx);return}
+ const r=c.getBoundingClientRect(),ox=e.clientX-r.left,oy=e.clientY-r.top;
+ c.style.cursor=hitAt(ox,oy)?"pointer":"grab";
+};
+c.onclick=e=>{if(moved>=5)return;const r=c.getBoundingClientRect(),ox=e.clientX-r.left,oy=e.clientY-r.top,hit=hitAt(ox,oy);
+ if(hit&&hit.type==="ev"){open(hit.i);return}
+ if(hit&&hit.type==="band"){setFocus(hit.name,true);return}
+ closePanel(); // blank click closes the side panel only; it does not exit focus
+};
+function open(i){sel=i;const e=ev[i];pd.textContent=fmtLong(e);pt.textContent=e.n;pp.textContent=e.txt;panel.classList.add('open');draw()}
+document.getElementById('px').onclick=()=>closePanel();
+document.getElementById('crumb').addEventListener('click',e=>{if(e.target.closest('.showall'))reset()});
+zi.onclick=()=>zoom(1/ZF,W/2);zo.onclick=()=>zoom(ZF,W/2);rs.onclick=reset;
+addEventListener('keydown',e=>{if(e.key=="+"||e.key=="=")zoom(1/ZF,W/2);else if(e.key=="-")zoom(ZF,W/2);else if(e.key=="0")reset();else if(e.key=="ArrowLeft")pan(W/10);else if(e.key=="ArrowRight")pan(-W/10)});
+addEventListener('resize',size);size();
+const q=new URLSearchParams(location.search);
+if(/demo=1/.test(location.search+location.hash)){L=7e8;R=-5e8;panel.style.transition="none";open(ev.findIndex(e=>e.n=="Dinosaur extinction"))}
+// arbitrary view for testing/screenshots: ?center=<yearsAgo>|?year=<CE year>&span=<years>
+if(q.has('center')||q.has('year')||q.has('span')){const s=Math.min(MAXSPAN,Math.max(MIN_SPAN,+(q.get('span')||L-R))),m=q.has('year')?NOW-q.get('year'):q.has('center')?+q.get('center'):(L+R)/2;L=m+s/2;R=m-s/2;clampView();draw()}
+// ?focus=life|earth|cosmos|humanity — enter that era's focus immediately (no animation, for screenshots)
+if(q.has('focus')){const n=eras.find(e=>e[0].toLowerCase()===String(q.get('focus')||"").toLowerCase());if(n)setFocus(n[0],false)}
+window.DT={get focus(){return eraFocus},get L(){return L},get R(){return R},get sel(){return sel},get hidden(){return hidden},get moved(){return moved},get W(){return W},get H(){return H},
+ visible(){return hits.map(h=>ev[h[2]].n)},panelOpen(){return panel.classList.contains('open')},get bandHits(){return bandHits},get hits(){return hits},setFocus,reset,exitFocus,closePanel,draw,eraFit,ev,eras};
+</script></body></html>
