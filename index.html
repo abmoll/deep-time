@@ -28,8 +28,8 @@ const MAX=13.8e9, MAXSPAN=MAX*1.04, MIN_SPAN=1; // all times are "years ago" (fl
 const NOW=(()=>{const d=new Date(),y=d.getFullYear(),a=new Date(y,0,1);return y+(d-a)/(new Date(y+1,0,1)-a)})();
 const cal=(y,m=1,d=1)=>y+(Date.UTC(y,m-1,d)-Date.UTC(y,0,1))/(Date.UTC(y+1,0,1)-Date.UTC(y,0,1)); // fractional CE year
 const ago=y=>NOW-y, bce=n=>1-n; // astronomical year of n BCE
-const eras=[["Cosmos",13.8e9,"#5b6cff"],["Earth",4.54e9,"#2fa3a8"],["Life",3.8e9,"#4cc46a"],["Hominid Era",3.9e6,"#ffb347"],["Modern Era",ago(1500),"#e06bc8"]];
-const CORE="Big Bang|First stars|Milky Way forms|Sun forms|Earth forms|First life|Great Oxygenation|Cambrian explosion|First dinosaurs|Dinosaur extinction|Australopithecus afarensis|Lucy|Homo erectus|First out of Africa|Controlled fire|Homo sapiens|Agriculture|Writing|Roman Empire|Printing press|Industrial Revolution|Moon landing".split("|");
+const eras=[["Cosmos",13.8e9,"#5b6cff"],["Earth",4.54e9,"#2fa3a8"],["Life",3.8e9,"#4cc46a"],["Hominid Era",3.9e6,"#ffb347"],["Farming Revolution",12e3,"#9acd32",ago(bce(3500))],["Urban Revolution",ago(bce(3500)),"#e07a5f",ago(bce(800))],["Classical Era",ago(bce(800)),"#6fa8dc",ago(1500)],["Modern Era",ago(1500),"#e06bc8"]];
+const CORE="Big Bang|First stars|Milky Way forms|Sun forms|Earth forms|First life|Great Oxygenation|Cambrian explosion|First dinosaurs|Dinosaur extinction|Australopithecus afarensis|Lucy|Homo erectus|First out of Africa|Controlled fire|Homo sapiens|Göbekli Tepe|First farming|Çatalhöyük|Uruk|Cuneiform writing|Great Pyramid of Giza|Roman Empire|Printing press|Industrial Revolution|Moon landing".split("|");
 const E=(n,t,txt,era,date,end)=>({n,t,txt,era,date,end,rank:CORE.includes(n)?1:2}); // rank 1 = headline events, placed first when crowded
 const ev=[
 // Cosmos
@@ -92,34 +92,46 @@ E("Lascaux",17e3,"Artists paint the famous halls of bulls and horses at Lascaux 
 E("First Humans in the Americas",16e3,"The first humans reach the Americas and spread throughout the continents.","Hominid Era","c. 16,000 years ago"),
 E("Dogs domesticated",15e3,"Wolves are domesticated, becoming the first animals to live alongside humans.","Hominid Era","c. 15,000 years ago"),
 E("End of the Ice Age",11700,"The Pleistocene glaciations end and the Holocene, our current warm epoch, begins.","Hominid Era","c. 11,700 years ago"),
-E("Göbekli Tepe",ago(bce(9500)),"Hunter-gatherers raise carved-stone monuments at Göbekli Tepe in Anatolia.","Hominid Era","c. 9500 BCE"),
-E("Agriculture",1.2e4,"Humans begin farming and domesticating plants and animals.","Hominid Era"),
-E("First cities",ago(bce(3500)),"Uruk and other Mesopotamian settlements grow into the first true cities.","Hominid Era","c. 3500 BCE (~5,500 years ago)"),
-E("Bronze Age",ago(bce(3300)),"Societies in Mesopotamia and beyond begin making tools and weapons from bronze.","Hominid Era","c. 3300 BCE"),
-E("Writing",ago(bce(3200)),"Cuneiform writing emerges in Mesopotamia.","Hominid Era","c. 3200 BCE"),
-E("Pyramids of Giza",ago(bce(2560)),"The Great Pyramid of Khufu is completed at Giza, Egypt.","Hominid Era","c. 2560 BCE"),
-E("Buddha and Confucius",ago(bce(500)),"The Buddha and Confucius teach in India and China, part of a wider flowering of philosophy.","Hominid Era","c. 500 BCE"),
-E("Founding of Rome",ago(cal(bce(753),4,21)),"According to tradition, Romulus founds the city of Rome on April 21, 753 BCE — the legendary date still marked as Rome's birthday.","Hominid Era","April 21, 753 BCE (traditional)"),
+E("Younger Dryas",12900,"A sudden return to ice-age conditions that may have pushed people toward farming.","Farming Revolution","c. 12,900 years ago"),
+E("Göbekli Tepe",11600,"Hunter-gatherers raise monumental carved-stone pillars at Göbekli Tepe in Anatolia, before farming takes hold.","Farming Revolution","c. 11,600 years ago"),
+E("First farming",11500,"People in the Fertile Crescent begin cultivating wheat and barley, the start of agriculture.","Farming Revolution","c. 11,500 years ago"),
+E("Goats and sheep domesticated",10500,"Goats and sheep are domesticated in the Near East, among the first livestock animals.","Farming Revolution","c. 10,500 years ago"),
+E("Jericho's walls",1e4,"A stone wall and tower are built at Jericho, among the first permanent towns.","Farming Revolution","c. 10,000 years ago (~8000 BCE)"),
+E("Rice farming",9500,"Rice is cultivated in China's Yangtze valley, beginning a major East Asian farming tradition.","Farming Revolution","c. 9,500 years ago"),
+E("Maize domesticated",9000,"Maize is domesticated in Mexico, later becoming a staple across the Americas.","Farming Revolution","c. 9,000 years ago"),
+E("Çatalhöyük",9000,"A dense farming town of several thousand people flourishes at Çatalhöyük in Anatolia.","Farming Revolution","c. 9,000 years ago"),
+E("Copper smelting",7500,"People begin smelting copper, the first metal to be extracted from ore.","Farming Revolution","c. 7,500 years ago"),
+E("Horses and the plow",6000,"Horses are domesticated on the steppe, and the plow comes into use, transforming farming and transport.","Farming Revolution","c. 6,000 years ago (~4000 BCE)"),
+E("Uruk",ago(bce(3500)),"Uruk in Mesopotamia grows into the first true city, a center of temples, trade, and administration.","Urban Revolution","c. 3500 BCE"),
+E("Cuneiform writing",ago(bce(3200)),"Cuneiform writing emerges in Mesopotamia, the earliest known script.","Urban Revolution","c. 3200 BCE"),
+E("Egypt unified",ago(bce(3100)),"Upper and Lower Egypt are unified under a single king, beginning the pharaonic state.","Urban Revolution","c. 3100 BCE"),
+E("Bronze Age",ago(bce(3000)),"Societies in Mesopotamia and beyond begin making tools and weapons from bronze.","Urban Revolution","c. 3000 BCE"),
+E("Indus Valley cities",ago(bce(2600)),"Planned cities such as Mohenjo-daro flourish in the Indus Valley.","Urban Revolution","c. 2600 BCE"),
+E("Great Pyramid of Giza",ago(bce(2560)),"The Great Pyramid of Khufu is completed at Giza, Egypt.","Urban Revolution","c. 2560 BCE"),
+E("Buddha and Confucius",ago(bce(500)),"The Buddha and Confucius teach in India and China, part of a wider flowering of philosophy.","Classical Era","c. 500 BCE"),
+E("Founding of Rome",ago(cal(bce(753),4,21)),"According to tradition, Romulus founds the city of Rome on April 21, 753 BCE — the legendary date still marked as Rome's birthday.","Classical Era","April 21, 753 BCE (traditional)"),
 E("First burials",100e3,"The earliest widely accepted intentional human burials appear, at sites such as Qafzeh and Skhul.","Hominid Era","c. 100,000 years ago"),
 E("Shell beads",75e3,"People in southern Africa, at sites such as Blombos Cave, pierce and wear shell beads as some of the earliest known jewelry.","Hominid Era","c. 75,000 years ago"),
 E("Toba eruption",74e3,"The Toba supervolcano in Sumatra erupts in one of the largest eruptions of the Quaternary, with debated effects on human populations.","Hominid Era","c. 74,000 years ago"),
 E("Neanderthal extinction",40e3,"Neanderthals disappear from the fossil record, leaving Homo sapiens as the last surviving human species.","Hominid Era","c. 40,000 years ago"),
 E("First pottery",20e3,"Hunter-gatherers in East Asia, at sites such as Xianrendong Cave, make the earliest known pottery.","Hominid Era","c. 20,000 years ago"),
-E("The wheel",ago(bce(3500)),"The wheel is invented in Mesopotamia, first used for pottery and soon after for vehicles.","Hominid Era","c. 3500 BCE"),
-E("Sargon of Akkad",ago(bce(2334)),"Sargon of Akkad founds what is often called the first empire, uniting city-states of Mesopotamia under Akkadian rule.","Hominid Era","c. 2334 BCE"),
-E("Code of Hammurabi",ago(bce(1754)),"King Hammurabi of Babylon issues one of the earliest and most complete written law codes.","Hominid Era","c. 1754 BCE"),
-E("Iron Age",ago(bce(1200)),"Iron working spreads in the eastern Mediterranean and Near East, beginning the Iron Age.","Hominid Era","c. 1200 BCE"),
-E("Athenian democracy",ago(bce(508)),"Cleisthenes' reforms in Athens establish a form of citizen democracy that will shape later political thought.","Hominid Era","508 BCE"),
-E("Alexander the Great",ago(bce(330)),"Alexander the Great completes the conquest of the Persian Empire, spreading Greek culture from Greece to the Indus.","Hominid Era","c. 330 BCE"),
-E("Qin unifies China",ago(bce(221)),"Qin Shi Huang unifies warring states into the first Chinese empire and standardizes writing, currency, and measures.","Hominid Era","221 BCE"),
-E("Silk Road",ago(bce(130)),"The Han dynasty opens regular trade routes across Central Asia, beginning the Silk Road linking China to the Mediterranean world.","Hominid Era","c. 130 BCE"),
-E("Birth of Islam",ago(610),"Muhammad receives his first revelations in Mecca, marking the beginning of Islam.","Hominid Era","610 CE"),
-E("Mongol Empire",ago(1206),"Temüjin is proclaimed Genghis Khan, founding the Mongol Empire, later the largest contiguous land empire in history.","Hominid Era","1206"),
-E("Roman Empire",ago(cal(-26,1,16)),"Octavian is granted the title Augustus in 27 BCE, founding the Roman Empire, which endures in the West until Romulus Augustulus is deposed in 476 CE.","Hominid Era","January 16, 27 BCE – September 4, 476 CE",ago(cal(476,9,4))),
-E("Magna Carta",ago(cal(1215,6,15)),"English barons force King John to accept the Magna Carta, a landmark in the rule of law.","Hominid Era","June 15, 1215"),
-E("Black Death",ago(1347),"The Black Death reaches Europe and kills roughly a third of the population.","Hominid Era","1347"),
-E("Printing press",ago(1440),"Johannes Gutenberg develops movable-type printing in Mainz.","Hominid Era","c. 1440"),
-E("Columbus reaches the Americas",ago(cal(1492,10,12)),"Christopher Columbus makes landfall in the Bahamas.","Hominid Era","October 12, 1492"),
+E("The wheel",ago(bce(3500)),"The wheel is invented in Mesopotamia, first used for pottery and soon after for vehicles.","Urban Revolution","c. 3500 BCE"),
+E("Sargon of Akkad",ago(bce(2334)),"Sargon of Akkad founds what is often called the first empire, uniting city-states of Mesopotamia under Akkadian rule.","Urban Revolution","c. 2334 BCE"),
+E("Code of Hammurabi",ago(bce(1754)),"King Hammurabi of Babylon issues one of the earliest and most complete written law codes.","Urban Revolution","c. 1754 BCE"),
+E("Shang dynasty",ago(bce(1600)),"The Shang dynasty rules in China, leaving the earliest substantial Chinese written records.","Urban Revolution","c. 1600 BCE"),
+E("Iron Age",ago(bce(1200)),"Iron working spreads in the eastern Mediterranean and Near East, beginning the Iron Age.","Urban Revolution","c. 1200 BCE"),
+E("Olmec civilization",ago(bce(1200)),"The Olmec civilization rises in Mesoamerica, among the earliest complex societies of the Americas.","Urban Revolution","c. 1200 BCE"),
+E("Athenian democracy",ago(bce(508)),"Cleisthenes' reforms in Athens establish a form of citizen democracy that will shape later political thought.","Classical Era","508 BCE"),
+E("Alexander the Great",ago(bce(330)),"Alexander the Great completes the conquest of the Persian Empire, spreading Greek culture from Greece to the Indus.","Classical Era","c. 330 BCE"),
+E("Qin unifies China",ago(bce(221)),"Qin Shi Huang unifies warring states into the first Chinese empire and standardizes writing, currency, and measures.","Classical Era","221 BCE"),
+E("Silk Road",ago(bce(130)),"The Han dynasty opens regular trade routes across Central Asia, beginning the Silk Road linking China to the Mediterranean world.","Classical Era","c. 130 BCE"),
+E("Birth of Islam",ago(610),"Muhammad receives his first revelations in Mecca, marking the beginning of Islam.","Classical Era","610 CE"),
+E("Mongol Empire",ago(1206),"Temüjin is proclaimed Genghis Khan, founding the Mongol Empire, later the largest contiguous land empire in history.","Classical Era","1206"),
+E("Roman Empire",ago(cal(-26,1,16)),"Octavian is granted the title Augustus in 27 BCE, founding the Roman Empire, which endures in the West until Romulus Augustulus is deposed in 476 CE.","Classical Era","January 16, 27 BCE – September 4, 476 CE",ago(cal(476,9,4))),
+E("Magna Carta",ago(cal(1215,6,15)),"English barons force King John to accept the Magna Carta, a landmark in the rule of law.","Classical Era","June 15, 1215"),
+E("Black Death",ago(1347),"The Black Death reaches Europe and kills roughly a third of the population.","Classical Era","1347"),
+E("Printing press",ago(1440),"Johannes Gutenberg develops movable-type printing in Mainz.","Classical Era","c. 1440"),
+E("Columbus reaches the Americas",ago(cal(1492,10,12)),"Christopher Columbus makes landfall in the Bahamas.","Classical Era","October 12, 1492"),
 E("Scientific Revolution",ago(1543),"Nicolaus Copernicus publishes On the Revolutions of the Heavenly Spheres, a starting point of the Scientific Revolution.","Modern Era","1543"),
 E("Newton's Principia",ago(cal(1687,7,5)),"Isaac Newton publishes his laws of motion and universal gravitation.","Modern Era","July 5, 1687"),
 E("Industrial Revolution",ago(1760),"Steam power and machines transform how humans live and work.","Modern Era","c. 1760"),
@@ -190,13 +202,18 @@ function draw(){if(!W)return;x.clearRect(0,0,W,H);
  const p0=px(0);if(calMode&&p0>=0&&p0<=W){x.strokeStyle="rgba(255,207,138,.35)";x.setLineDash([3,4]);x.beginPath();x.moveTo(p0,20);x.lineTo(p0,axY);x.stroke();x.setLineDash([]);x.fillStyle="#ffcf8a";x.fillText("Now",Math.min(W-16,Math.max(16,p0)),axY+38)}
  bandHits=[];
  const slivers=[];
+ const SLIVER_ERAS=new Set(["Hominid Era","Farming Revolution","Urban Revolution","Classical Era","Modern Era"]);
+ const SLIVER_MIN={ "Hominid Era":{"Farming Revolution":10,"Urban Revolution":7,"Classical Era":6,"Modern Era":5}, "Farming Revolution":{"Urban Revolution":8}, "Urban Revolution":{"Classical Era":8}, "Classical Era":{"Modern Era":6} };
+ const bandStep=24,chipH=22;
  eras.forEach((e,i)=>{
-  const rawA=px(e[1]),rawB=px(0),y=axY-40-i*34,on=!eraFocus||eraFocus===e[0];
+  const eraStart=e[1],eraEnd=e[3]!=null?e[3]:0;
+  if(eraStart<=R||eraEnd>=L)return; // skip eras that do not overlap the visible time range
+  const rawA=px(eraStart),rawB=px(eraEnd),y=axY-24-i*bandStep,on=!eraFocus||eraFocus===e[0];
   const a=Math.max(0,rawA),b=Math.min(W,rawB),vis=rawB>0&&rawA<W&&b>a;
-  x.font="bold 13px system-ui";x.textAlign="left";const tw=x.measureText(e[0]).width,chipW=tw+16,chipH=26;
+  x.font="bold 13px system-ui";x.textAlign="left";const tw=x.measureText(e[0]).width,chipW=tw+16;
   const trueW=rawB-rawA;
-  const sliverMin=(eraFocus==="Hominid Era"&&e[0]==="Modern Era")?6:3;
-  const sliverMode=(e[0]==="Hominid Era"||e[0]==="Modern Era")&&trueW<chipW&&rawB>0&&rawA<W;
+  const sliverMin=(SLIVER_MIN[eraFocus]&&SLIVER_MIN[eraFocus][e[0]])||3;
+  const atRight=vis&&(W-b)<8,tooNarrow=trueW<chipW||(vis&&(b-a)<chipW),sliverMode=SLIVER_ERAS.has(e[0])&&rawB>0&&rawA<W&&tooNarrow&&(trueW<chipW||atRight);
   if(sliverMode){
     const sw=Math.max(sliverMin,vis?b-a:Math.max(0,trueW)),sx=Math.max(0,Math.min(W-sw-1,vis?b-sw:rawB-sw));
     x.save();
@@ -217,7 +234,7 @@ function draw(){if(!W)return;x.clearRect(0,0,W,H);
   if(!vis||b-a<chipW){x.fillStyle=e[2]+(on?"dd":"55");x.beginPath();x.roundRect(lx-8,y,chipW,chipH,6);x.fill()}
   if(on&&eraFocus===e[0]){x.strokeStyle="rgba(255,255,255,.9)";x.lineWidth=2;x.beginPath();if(vis&&b-a>=chipW)x.roundRect(a,y,b-a,chipH,6);else x.roundRect(lx-8,y,chipW,chipH,6);x.stroke();x.lineWidth=1;
    x.shadowColor=e[2];x.shadowBlur=16;x.strokeStyle=e[2];x.beginPath();if(vis&&b-a>=chipW)x.roundRect(a,y,b-a,chipH,6);else x.roundRect(lx-8,y,chipW,chipH,6);x.stroke();x.shadowBlur=0}
-  x.fillStyle=on?"#fff":"rgba(255,255,255,.42)";x.fillText(e[0],lx,y+18);
+  x.fillStyle=on?"#fff":"rgba(255,255,255,.42)";x.fillText(e[0],lx,y+15);
   const hx0=vis?Math.min(a,lx-8):lx-8,hx1=vis?Math.max(b,lx-8+chipW):lx-8+chipW;
   bandHits.push({a:hx0,b:hx1,y,h:chipH,name:e[0]});
  });
@@ -237,23 +254,25 @@ function draw(){if(!W)return;x.clearRect(0,0,W,H);
  if(slivers.length){
   slivers.sort((a,b)=>a.y-b.y);
   x.font="600 13px system-ui";x.textAlign="left";
-  const padX=11,boxH=28;
+  const padX=11,boxH=22,gap=2;
+  let stackY=Math.min(...slivers.map(s=>s.y+(s.h-boxH)/2));
   slivers.forEach(s=>{
     const label=s.name,tw=x.measureText(label).width,bw=tw+padX*2,bh=boxH;
-    const bx=Math.max(12,s.sx-56-bw),by=s.y+(s.h-bh)/2;
+    const bx=Math.max(12,s.sx-56-bw);let by=Math.max(s.y+(s.h-bh)/2,stackY);stackY=by+bh+gap;
     x.strokeStyle=s.color;x.lineWidth=1.3;x.beginPath();
     x.moveTo(bx+bw,by+bh/2);x.lineTo(s.sx,s.y+s.h/2);x.stroke();
     x.fillStyle=s.color;x.beginPath();x.arc(s.sx,s.y+s.h/2,2.4,0,7);x.fill();
     x.fillStyle="rgba(8,10,28,.94)";x.beginPath();x.roundRect(bx,by,bw,bh,6);x.fill();
     x.strokeStyle=s.color;x.lineWidth=1.4;x.stroke();
-    x.fillStyle="#fff";x.font="600 13px system-ui";x.textAlign="left";x.fillText(label,bx+padX,by+19);
+    x.fillStyle="#fff";x.font="600 13px system-ui";x.textAlign="left";x.fillText(label,bx+padX,by+15);
     bandHits.push({a:bx,b:bx+bw,y:by,h:bh,name:s.name});
   });
  }
  const mid=Math.min(MAX,Math.max(0,tx(W/2)));let cur=eras.filter(e=>e[1]>=mid).map(e=>e[0]);if(!cur.length)cur=["Cosmos"];
  const lo=Math.max(R,0),hi=Math.min(L,MAX),ptl=t=>calMode?(t<.5?"Now":yearLabel(Math.floor(NOW-t),NOW-hi<1)):fmtAgo(t,(hi-lo)/50);
  const view="Viewing: <b>"+spanText(Math.max(0,hi-lo))+"</b> <span class=r>("+ptl(hi)+" → "+ptl(lo)+")</span>";
- const focusLabel=eraFocus==="Modern Era"?"Hominid Era › <span>Modern Era</span>":"<span>"+eraFocus+"</span>";
+ const NESTED_PARENT={"Farming Revolution":"Hominid Era","Urban Revolution":"Hominid Era","Classical Era":"Hominid Era","Modern Era":"Hominid Era"};
+ const focusLabel=NESTED_PARENT[eraFocus]?NESTED_PARENT[eraFocus]+" › <span>"+eraFocus+"</span>":"<span>"+eraFocus+"</span>";
  document.getElementById('crumb').innerHTML=eraFocus?("Focus: "+focusLabel+" <span class=showall title=\"All Time\">Show all</span> &nbsp;·&nbsp; "+view):cur.map((n,i)=>i==cur.length-1?"<span>"+n+"</span>":n).join(" › ")+" &nbsp;·&nbsp; "+view;
 }
 function clampView(){const s=L-R;if(s>=MAXSPAN*.9999){fullView();return}const lo=-.05*s,hi=MAX+.05*s;if(R<lo){L+=lo-R;R=lo}if(L>hi){R-=L-hi;L=hi}}
@@ -261,13 +280,19 @@ function cancelAnim(){if(anim){cancelAnimationFrame(anim);anim=0}}
 function easeInOut(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2}
 function animateTo(nL,nR,ms=600){cancelAnim();const sL=L,sR=R,t0=performance.now();
  (function step(now){const u=Math.min(1,(now-t0)/ms),e=easeInOut(u);L=sL+(nL-sL)*e;R=sR+(nR-sR)*e;draw();if(u<1)anim=requestAnimationFrame(step);else{L=nL;R=nR;anim=0;draw()}})(t0)}
+function eraWindow(hi,lo){const pad=Math.max(hi-lo,1)*0.08;let nL=hi+pad,nR=lo-pad,s=nL-nR;
+  const loB=-.05*s,hiB=MAX+.05*s;if(nR<loB){nL+=loB-nR;nR=loB}if(nL>hiB){nR-=nL-hiB;nL=hiB}return[nL,nR]}
 function eraFit(name){
  // Hominid Era opens on a fixed ~4 Mya → now window (not a fit of all its events), with left padding so Australopithecus stays visible
- if(name==="Hominid Era"){const hi=4e6,lo=0,pad=(hi-lo)*0.08;let nL=hi+pad,nR=lo-pad,s=nL-nR;
-  const loB=-.05*s,hiB=MAX+.05*s;if(nR<loB){nL+=loB-nR;nR=loB}if(nL>hiB){nR-=nL-hiB;nL=hiB}return[nL,nR]}
+ if(name==="Hominid Era")return eraWindow(4e6,0);
+ // Farming: official bounds plus Younger Dryas just before 12,000 years ago
+ if(name==="Farming Revolution")return eraWindow(12900,ago(bce(3500)));
+ // Urban Revolution: c. 3500 BCE → c. 800 BCE
+ if(name==="Urban Revolution")return eraWindow(ago(bce(3500)),ago(bce(800)));
+ // Classical Era: c. 800 BCE → 1500 CE, so the Founding of Rome and the printing press both fit
+ if(name==="Classical Era")return eraWindow(ago(bce(800)),ago(1500));
  // Modern Era opens on a fixed 1500 CE → now window, with small padding
- if(name==="Modern Era"){const hi=ago(1500),lo=0,pad=(hi-lo)*0.08;let nL=hi+pad,nR=lo-pad,s=nL-nR;
-  const loB=-.05*s,hiB=MAX+.05*s;if(nR<loB){nL+=loB-nR;nR=loB}if(nL>hiB){nR-=nL-hiB;nL=hiB}return[nL,nR]}
+ if(name==="Modern Era")return eraWindow(ago(1500),0);
  const es=ev.filter(e=>e.era===name),hi=Math.max(...es.map(e=>e.t)),lo=Math.min(...es.map(e=>e.end!=null?e.end:e.t)),pad=(hi-lo)*0.08;
  let nL=hi+pad,nR=lo-pad,s=nL-nR;if(s>=MAXSPAN*.9999)return[MAX*1.02,-MAX*0.02];
  const loB=-.05*s,hiB=MAX+.05*s;if(nR<loB){nL+=loB-nR;nR=loB}if(nL>hiB){nR-=nL-hiB;nL=hiB}return[nL,nR]}
@@ -294,9 +319,9 @@ const q=new URLSearchParams(location.search);
 if(/demo=1/.test(location.search+location.hash)){L=7e8;R=-5e8;panel.style.transition="none";open(ev.findIndex(e=>e.n=="Dinosaur extinction"))}
 // arbitrary view for testing/screenshots: ?center=<yearsAgo>|?year=<CE year>&span=<years>
 if(q.has('center')||q.has('year')||q.has('span')){const s=Math.min(MAXSPAN,Math.max(MIN_SPAN,+(q.get('span')||L-R))),m=q.has('year')?NOW-q.get('year'):q.has('center')?+q.get('center'):(L+R)/2;L=m+s/2;R=m-s/2;clampView();draw()}
-// ?focus=life|earth|cosmos|humanity|hominid|modern — enter that era's focus immediately (no animation, for screenshots)
+// ?focus=life|earth|cosmos|humanity|hominid|farming|urban|classical|modern — enter that era's focus immediately (no animation, for screenshots)
 // ?focus=humanity is kept as an alias for Hominid Era
-if(q.has('focus')){const s=String(q.get('focus')||"").toLowerCase().replace(/\s+/g,""),alias={humanity:"Hominid Era",hominid:"Hominid Era"},n=alias[s]?eras.find(e=>e[0]===alias[s]):eras.find(e=>{const k=e[0].toLowerCase();return k.replace(/\s+/g,"")===s||k.startsWith(s)});if(n)setFocus(n[0],false)}
+if(q.has('focus')){const s=String(q.get('focus')||"").toLowerCase().replace(/\s+/g,""),alias={humanity:"Hominid Era",hominid:"Hominid Era",farming:"Farming Revolution",urban:"Urban Revolution",classical:"Classical Era",modern:"Modern Era"},n=alias[s]?eras.find(e=>e[0]===alias[s]):eras.find(e=>{const k=e[0].toLowerCase();return k.replace(/\s+/g,"")===s||k.startsWith(s)});if(n)setFocus(n[0],false)}
 window.DT={get focus(){return eraFocus},get L(){return L},get R(){return R},get sel(){return sel},get hidden(){return hidden},get W(){return W},get H(){return H},
  visible(){return hits.map(h=>ev[h[2]].n)},panelOpen(){return panel.classList.contains('open')},get bandHits(){return bandHits},get hits(){return hits},setFocus,reset,exitFocus,closePanel,draw,eraFit,ev,eras};
 </script></body></html>
