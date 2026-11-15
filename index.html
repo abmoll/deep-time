@@ -19,11 +19,11 @@ canvas{width:100%;height:100%;cursor:default;display:block}
 #panel .x{position:absolute;top:12px;right:16px;background:none;border:0;color:#aaa;font-size:24px;cursor:pointer}
 </style></head><body>
 <header><h1>DEEP TIME</h1><div class="tag">13.8 billion years of history</div></header>
-<div id="bar"><div id="crumb"></div><div id="ctl"><button id="zi">+</button><button id="zo">−</button><button id="rs" title="All Time" aria-label="All Time">All Time</button></div></div>
+<div id="bar"><div id="crumb"></div><div id="ctl"><button id="rs" title="All Time" aria-label="All Time">All Time</button></div></div>
 <div id="wrap"><canvas id="c"></canvas></div>
 <div id="panel"><button class="x" id="px">×</button><div class="d" id="pd"></div><h2 id="pt"></h2><p id="pp"></p><button class="w">▶ Watch the episode</button></div>
 <script>
-const MAX=13.8e9, MAXSPAN=MAX*1.04, MIN_SPAN=1, ZF=1.75; // all times are "years ago" (float64); MIN_SPAN is the deepest zoom
+const MAX=13.8e9, MAXSPAN=MAX*1.04, MIN_SPAN=1; // all times are "years ago" (float64); MIN_SPAN is the smallest allowed view span
 // NOW = present as a fractional calendar year, so calendar dates map to years-ago exactly
 const NOW=(()=>{const d=new Date(),y=d.getFullYear(),a=new Date(y,0,1);return y+(d-a)/(new Date(y+1,0,1)-a)})();
 const cal=(y,m=1,d=1)=>y+(Date.UTC(y,m-1,d)-Date.UTC(y,0,1))/(Date.UTC(y+1,0,1)-Date.UTC(y,0,1)); // fractional CE year
@@ -165,7 +165,7 @@ function spanText(s){const sig=v=>num(Number(v.toPrecision(3)),2);
  return s>=1e9?sig(s/1e9)+" billion years":s>=1e6?sig(s/1e6)+" million years":s>=1e4?sig(s)+" years":s>=10?num(Math.round(s))+" years":s>=2?num(s,1)+" years":Math.round(s*12)+" months"}
 const STEPS_AGO=[],STEPS_CAL=[1/12,1/4,1/2];
 for(let e=-1;e<=11;e++)for(const m of[1,2,5]){const v=m*10**e;STEPS_AGO.push(v);if(v>=1)STEPS_CAL.push(v)}
-// tick generation: years-ago mode (Bya/Mya/kya) or calendar mode (BCE/CE years, months at the deepest zoom)
+// tick generation: years-ago mode (Bya/Mya/kya) or calendar mode (BCE/CE years, months at tight calendar views)
 function ticksFor(step,calMode){const out=[],lo=Math.max(R,0),hi=Math.min(L,MAX);if(hi<lo)return out;
  if(!calMode){for(let k=Math.ceil(lo/step);k<=Math.floor(hi/step);k++){const t=k*step;out.push({t,s:fmtAgo(t,step)})}return out}
  const yl=NOW-hi,yr=NOW-lo,suf=yl<1;
@@ -221,13 +221,13 @@ function draw(){if(!W)return;x.clearRect(0,0,W,H);
   const hx0=vis?Math.min(a,lx-8):lx-8,hx1=vis?Math.max(b,lx-8+chipW):lx-8+chipW;
   bandHits.push({a:hx0,b:hx1,y,h:chipH,name:e[0]});
  });
- // events: greedy lane packing by real label width, so hidden markers reappear as zoom spreads them out
+ // events: greedy lane packing by real label width, so hidden markers reappear as the view spreads them out
  // in focus mode, only that era's events are shown (all of them); overview uses the full set
  hits=[];hidden=0;const lane=[...Array(5)].map(()=>[]),placed=[];x.textAlign="center";x.font="13px system-ui";
  const vis=[];ev.forEach((e,i)=>{if(eraFocus&&e.era!==eraFocus)return;const p=px(e.t),q=e.end!=null?px(e.end):p,w=x.measureText(e.n).width,mid=Math.min(W-w/2-4,Math.max(w/2+4,(p+q)/2));
   if(q<-20||p>W+20)return;vis.push({e,i,p,q,mid,a:Math.min(p,mid-w/2),b:Math.max(q,mid+w/2)})});
  vis.sort((u,v)=>u.e.rank-v.e.rank||u.i-v.i).forEach(o=>{const k=lane.findIndex(l=>l.every(([a,b])=>o.b+10<a||o.a>b+10));
-  // overview: minor events appear only once zoom creates ~100px of space from any already-placed marker, so the full 13.8 Bya view stays a clean set of majors
+  // overview: minor events appear only once the view creates ~100px of space from any already-placed marker, so the full 13.8 Bya view stays a clean set of majors
   if(k<0||(!eraFocus&&o.e.rank>1&&placed.some(q=>Math.abs(q-o.p)<100))){hidden++;return}lane[k].push([o.a,o.b]);placed.push(o.p);
   const y=66+k*44,{e,i,p,q,mid}=o;x.strokeStyle="rgba(255,200,140,.4)";x.beginPath();x.moveTo(p,y+8);x.lineTo(p,axY);x.stroke();
   if(q!==p){x.fillStyle="rgba(255,184,107,.35)";x.fillRect(p,y-3,q-p,6);x.beginPath();x.moveTo(q,y+4);x.lineTo(q,axY);x.stroke()}
@@ -274,10 +274,6 @@ function eraFit(name){
 function setFocus(name,animate=true){eraFocus=name;const[nL,nR]=eraFit(name);if(animate)animateTo(nL,nR);else{cancelAnim();L=nL;R=nR;draw()}}
 function closePanel(){if(sel<0&&!panel.classList.contains('open'))return;sel=-1;panel.classList.remove('open');draw()}
 function exitFocus(animate=true){eraFocus=null;sel=-1;panel.classList.remove('open');if(animate)animateTo(MAX*1.02,-MAX*0.02);else{cancelAnim();fullView();draw()}}
-// f<1 zooms in; the time under pixel p stays fixed
-function zoom(f,p){cancelAnim();const s=L-R,ns=Math.min(MAXSPAN,Math.max(MIN_SPAN,s*f));if(ns>=MAXSPAN){fullView();draw();return}
- const t=tx(p),k=ns/s;L=t+(L-t)*k;R=t+(R-t)*k;clampView();draw()}
-function pan(dxPx){cancelAnim();const d=dxPx/W*(L-R);L+=d;R+=d;clampView();draw()}
 function reset(){exitFocus(true)}
 function hitAt(ox,oy){const h=hits.find(h=>Math.hypot(h[0]-ox,h[1]-oy)<14);if(h)return{type:"ev",i:h[2]};const b=bandHits.find(b=>ox>=b.a&&ox<=b.b&&oy>=b.y&&oy<=b.y+b.h);if(b)return{type:"band",name:b.name}}
 c.onpointermove=e=>{
@@ -292,8 +288,7 @@ c.onclick=e=>{const r=c.getBoundingClientRect(),ox=e.clientX-r.left,oy=e.clientY
 function open(i){sel=i;const e=ev[i];pd.textContent=fmtLong(e);pt.textContent=e.n;pp.textContent=e.txt;panel.classList.add('open');draw()}
 document.getElementById('px').onclick=()=>closePanel();
 document.getElementById('crumb').addEventListener('click',e=>{if(e.target.closest('.showall'))reset()});
-zi.onclick=()=>zoom(1/ZF,W/2);zo.onclick=()=>zoom(ZF,W/2);rs.onclick=reset;
-addEventListener('keydown',e=>{if(e.key=="+"||e.key=="=")zoom(1/ZF,W/2);else if(e.key=="-")zoom(ZF,W/2);else if(e.key=="0")reset();else if(e.key=="ArrowLeft")pan(W/10);else if(e.key=="ArrowRight")pan(-W/10)});
+rs.onclick=reset;
 addEventListener('resize',size);size();
 const q=new URLSearchParams(location.search);
 if(/demo=1/.test(location.search+location.hash)){L=7e8;R=-5e8;panel.style.transition="none";open(ev.findIndex(e=>e.n=="Dinosaur extinction"))}
