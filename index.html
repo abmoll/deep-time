@@ -28,7 +28,7 @@ const MAX=13.8e9, MAXSPAN=MAX*1.04, MIN_SPAN=1; // all times are "years ago" (fl
 const NOW=(()=>{const d=new Date(),y=d.getFullYear(),a=new Date(y,0,1);return y+(d-a)/(new Date(y+1,0,1)-a)})();
 const cal=(y,m=1,d=1)=>y+(Date.UTC(y,m-1,d)-Date.UTC(y,0,1))/(Date.UTC(y+1,0,1)-Date.UTC(y,0,1)); // fractional CE year
 const ago=y=>NOW-y, bce=n=>1-n; // astronomical year of n BCE
-const eras=[["Cosmos",13.8e9,"#5b6cff"],["Earth",4.54e9,"#2fa3a8"],["Life",3.8e9,"#4cc46a"],["Hominid Era",3.9e6,"#ffb347"],["Farming",12e3,"#9acd32",ago(bce(3500))],["Modern Era",ago(1500),"#e06bc8"]];
+const eras=[["Cosmos",13.8e9,"#5b6cff"],["Earth",4.54e9,"#2fa3a8"],["Life",3.8e9,"#4cc46a"],["Hominid Era",3.9e6,"#ffb347"],["Farming",12e3,"#9acd32",ago(bce(3500))],["Modern",ago(1500),"#e06bc8"]];
 const CORE="Big Bang|First stars|Milky Way forms|Sun forms|Earth forms|First life|Great Oxygenation|Cambrian explosion|First dinosaurs|Dinosaur extinction|Australopithecus afarensis|Lucy|Homo erectus|First out of Africa|Controlled fire|Homo sapiens|Göbekli Tepe|First farming|Çatalhöyük|Uruk|Cuneiform writing|Great Pyramid of Giza|Roman Empire|Printing press|Industrial Revolution|Moon landing".split("|");
 const E=(n,t,txt,era,date,end)=>({n,t,txt,era,date,end,rank:CORE.includes(n)?1:2}); // rank 1 = headline events, placed first when crowded
 const ev=[
@@ -132,31 +132,31 @@ E("Magna Carta",ago(cal(1215,6,15)),"English barons force King John to accept th
 E("Black Death",ago(1347),"The Black Death reaches Europe and kills roughly a third of the population.","Hominid Era","1347"),
 E("Printing press",ago(1440),"Johannes Gutenberg develops movable-type printing in Mainz.","Hominid Era","c. 1440"),
 E("Columbus reaches the Americas",ago(cal(1492,10,12)),"Christopher Columbus makes landfall in the Bahamas.","Hominid Era","October 12, 1492"),
-E("Scientific Revolution",ago(1543),"Nicolaus Copernicus publishes On the Revolutions of the Heavenly Spheres, a starting point of the Scientific Revolution.","Modern Era","1543"),
-E("Newton's Principia",ago(cal(1687,7,5)),"Isaac Newton publishes his laws of motion and universal gravitation.","Modern Era","July 5, 1687"),
-E("Industrial Revolution",ago(1760),"Steam power and machines transform how humans live and work.","Modern Era","c. 1760"),
-E("First powered flight",ago(cal(1903,12,17)),"The Wright brothers fly at Kitty Hawk, North Carolina.","Modern Era","December 17, 1903"),
-E("World War II",ago(cal(1939,9,1)),"The deadliest conflict in history, from the invasion of Poland to Japan's formal surrender.","Modern Era","September 1, 1939 – September 2, 1945",ago(cal(1945,9,2))),
-E("Sputnik 1",ago(cal(1957,10,4)),"The Soviet Union launches the first artificial satellite, starting the Space Age.","Modern Era","October 4, 1957"),
-E("Moon landing",ago(cal(1969,7,20)),"Apollo 11 astronauts walk on the Moon.","Modern Era","July 20, 1969"),
-E("Fall of the Berlin Wall",ago(cal(1989,11,9)),"The border between East and West Berlin opens.","Modern Era","November 9, 1989"),
-E("World Wide Web",ago(cal(1991,8,6)),"Tim Berners-Lee makes the Web publicly available.","Modern Era","August 6, 1991"),
-E("Smartphones",ago(cal(2007,1,9)),"Apple introduces the iPhone, ushering in the era of the smartphone.","Modern Era","January 9, 2007"),
+E("Scientific Revolution",ago(1543),"Nicolaus Copernicus publishes On the Revolutions of the Heavenly Spheres, a starting point of the Scientific Revolution.","Modern","1543"),
+E("Newton's Principia",ago(cal(1687,7,5)),"Isaac Newton publishes his laws of motion and universal gravitation.","Modern","July 5, 1687"),
+E("Industrial Revolution",ago(1760),"Steam power and machines transform how humans live and work.","Modern","c. 1760"),
+E("First powered flight",ago(cal(1903,12,17)),"The Wright brothers fly at Kitty Hawk, North Carolina.","Modern","December 17, 1903"),
+E("World War II",ago(cal(1939,9,1)),"The deadliest conflict in history, from the invasion of Poland to Japan's formal surrender.","Modern","September 1, 1939 – September 2, 1945",ago(cal(1945,9,2))),
+E("Sputnik 1",ago(cal(1957,10,4)),"The Soviet Union launches the first artificial satellite, starting the Space Age.","Modern","October 4, 1957"),
+E("Moon landing",ago(cal(1969,7,20)),"Apollo 11 astronauts walk on the Moon.","Modern","July 20, 1969"),
+E("Fall of the Berlin Wall",ago(cal(1989,11,9)),"The border between East and West Berlin opens.","Modern","November 9, 1989"),
+E("World Wide Web",ago(cal(1991,8,6)),"Tim Berners-Lee makes the Web publicly available.","Modern","August 6, 1991"),
+E("Smartphones",ago(cal(2007,1,9)),"Apple introduces the iPhone, ushering in the era of the smartphone.","Modern","January 9, 2007"),
 // Modern Era additions
-E("Protestant Reformation",ago(cal(1517,10,31)),"Martin Luther posts his Ninety-five Theses in Wittenberg, launching the Protestant Reformation.","Modern Era","October 31, 1517"),
-E("First circumnavigation",ago(cal(1522,9,6)),"Juan Sebastián Elcano and the survivors of Magellan's expedition complete the first circumnavigation of the Earth.","Modern Era","September 6, 1522"),
-E("Galileo's telescope",ago(cal(1609,8,25)),"Galileo Galilei turns a telescope to the night sky, revealing mountains on the Moon and, soon after, the moons of Jupiter.","Modern Era","1609"),
-E("Declaration of Independence",ago(cal(1776,7,4)),"The American colonies adopt the Declaration of Independence, creating a new republic and inspiring later democratic movements.","Modern Era","July 4, 1776"),
-E("French Revolution",ago(cal(1789,7,14)),"The French Revolution begins with the storming of the Bastille, overthrowing the monarchy and spreading ideas of citizenship and rights.","Modern Era","July 14, 1789"),
-E("Smallpox vaccine",ago(cal(1796,5,14)),"Edward Jenner inoculates James Phipps with cowpox, demonstrating the first successful vaccine.","Modern Era","May 14, 1796"),
-E("Origin of Species",ago(cal(1859,11,24)),"Charles Darwin publishes On the Origin of Species, setting out the theory of evolution by natural selection.","Modern Era","November 24, 1859"),
-E("Electric light",ago(cal(1879,10,21)),"Thomas Edison demonstrates a practical incandescent light bulb, opening the way to electric lighting.","Modern Era","October 21, 1879"),
-E("Theory of relativity",ago(cal(1905,9,26)),"Albert Einstein publishes special relativity, transforming ideas of space, time, and energy.","Modern Era","September 26, 1905"),
-E("World War I",ago(cal(1914,7,28)),"The First World War engulfs Europe and beyond, redrawing maps and setting the stage for later global conflict.","Modern Era","July 28, 1914 – November 11, 1918",ago(cal(1918,11,11))),
-E("Penicillin",ago(cal(1928,9,28)),"Alexander Fleming discovers penicillin, the first widely used antibiotic.","Modern Era","September 28, 1928"),
-E("First nuclear weapon",ago(cal(1945,7,16)),"The Trinity test in New Mexico detonates the first nuclear weapon, ushering in the atomic age.","Modern Era","July 16, 1945"),
-E("DNA double helix",ago(cal(1953,4,25)),"James Watson and Francis Crick publish the double-helix structure of DNA, explaining how genetic information is stored.","Modern Era","April 25, 1953"),
-E("Human Genome Project",ago(cal(2003,4,14)),"The Human Genome Project completes a nearly full map of the human genetic code.","Modern Era","April 14, 2003")
+E("Protestant Reformation",ago(cal(1517,10,31)),"Martin Luther posts his Ninety-five Theses in Wittenberg, launching the Protestant Reformation.","Modern","October 31, 1517"),
+E("First circumnavigation",ago(cal(1522,9,6)),"Juan Sebastián Elcano and the survivors of Magellan's expedition complete the first circumnavigation of the Earth.","Modern","September 6, 1522"),
+E("Galileo's telescope",ago(cal(1609,8,25)),"Galileo Galilei turns a telescope to the night sky, revealing mountains on the Moon and, soon after, the moons of Jupiter.","Modern","1609"),
+E("Declaration of Independence",ago(cal(1776,7,4)),"The American colonies adopt the Declaration of Independence, creating a new republic and inspiring later democratic movements.","Modern","July 4, 1776"),
+E("French Revolution",ago(cal(1789,7,14)),"The French Revolution begins with the storming of the Bastille, overthrowing the monarchy and spreading ideas of citizenship and rights.","Modern","July 14, 1789"),
+E("Smallpox vaccine",ago(cal(1796,5,14)),"Edward Jenner inoculates James Phipps with cowpox, demonstrating the first successful vaccine.","Modern","May 14, 1796"),
+E("Origin of Species",ago(cal(1859,11,24)),"Charles Darwin publishes On the Origin of Species, setting out the theory of evolution by natural selection.","Modern","November 24, 1859"),
+E("Electric light",ago(cal(1879,10,21)),"Thomas Edison demonstrates a practical incandescent light bulb, opening the way to electric lighting.","Modern","October 21, 1879"),
+E("Theory of relativity",ago(cal(1905,9,26)),"Albert Einstein publishes special relativity, transforming ideas of space, time, and energy.","Modern","September 26, 1905"),
+E("World War I",ago(cal(1914,7,28)),"The First World War engulfs Europe and beyond, redrawing maps and setting the stage for later global conflict.","Modern","July 28, 1914 – November 11, 1918",ago(cal(1918,11,11))),
+E("Penicillin",ago(cal(1928,9,28)),"Alexander Fleming discovers penicillin, the first widely used antibiotic.","Modern","September 28, 1928"),
+E("First nuclear weapon",ago(cal(1945,7,16)),"The Trinity test in New Mexico detonates the first nuclear weapon, ushering in the atomic age.","Modern","July 16, 1945"),
+E("DNA double helix",ago(cal(1953,4,25)),"James Watson and Francis Crick publish the double-helix structure of DNA, explaining how genetic information is stored.","Modern","April 25, 1953"),
+E("Human Genome Project",ago(cal(2003,4,14)),"The Human Genome Project completes a nearly full map of the human genetic code.","Modern","April 14, 2003")
 ].sort((a,b)=>b.t-a.t);
 const c=document.getElementById('c'),x=c.getContext('2d'),panel=document.getElementById('panel');
 let W,H,L,R; // view edges in years ago; L = left (older), R = right (newer)
@@ -202,8 +202,8 @@ function draw(){if(!W)return;x.clearRect(0,0,W,H);
  const p0=px(0);if(calMode&&p0>=0&&p0<=W){x.strokeStyle="rgba(255,207,138,.35)";x.setLineDash([3,4]);x.beginPath();x.moveTo(p0,20);x.lineTo(p0,axY);x.stroke();x.setLineDash([]);x.fillStyle="#ffcf8a";x.fillText("Now",Math.min(W-16,Math.max(16,p0)),axY+38)}
  bandHits=[];
  const slivers=[];
- const SLIVER_ERAS=new Set(["Hominid Era","Farming","Modern Era"]);
- const SLIVER_MIN={ "Hominid Era":{"Farming":10,"Modern Era":5}, "Farming":{"Modern Era":8} };
+ const SLIVER_ERAS=new Set(["Hominid Era","Farming","Modern"]);
+ const SLIVER_MIN={ "Hominid Era":{"Farming":10,"Modern":5}, "Farming":{"Modern":8} };
  const bandStep=24,chipH=22;
  eras.forEach((e,i)=>{
   const eraStart=e[1],eraEnd=e[3]!=null?e[3]:0;
@@ -271,7 +271,7 @@ function draw(){if(!W)return;x.clearRect(0,0,W,H);
  const mid=Math.min(MAX,Math.max(0,tx(W/2)));let cur=eras.filter(e=>e[1]>=mid).map(e=>e[0]);if(!cur.length)cur=["Cosmos"];
  const lo=Math.max(R,0),hi=Math.min(L,MAX),ptl=t=>calMode?(t<.5?"Now":yearLabel(Math.floor(NOW-t),NOW-hi<1)):fmtAgo(t,(hi-lo)/50);
  const view="Viewing: <b>"+spanText(Math.max(0,hi-lo))+"</b> <span class=r>("+ptl(hi)+" → "+ptl(lo)+")</span>";
- const NESTED_PARENT={"Farming":"Hominid Era","Modern Era":"Hominid Era"};
+ const NESTED_PARENT={"Farming":"Hominid Era","Modern":"Hominid Era"};
  const focusLabel=NESTED_PARENT[eraFocus]?NESTED_PARENT[eraFocus]+" › <span>"+eraFocus+"</span>":"<span>"+eraFocus+"</span>";
  document.getElementById('crumb').innerHTML=eraFocus?("Focus: "+focusLabel+" <span class=showall title=\"All Time\">Show all</span> &nbsp;·&nbsp; "+view):cur.map((n,i)=>i==cur.length-1?"<span>"+n+"</span>":n).join(" › ")+" &nbsp;·&nbsp; "+view;
 }
@@ -288,7 +288,7 @@ function eraFit(name){
  // Farming: official bounds plus Younger Dryas just before 12,000 years ago
  if(name==="Farming")return eraWindow(12900,ago(bce(3500)));
  // Modern Era opens on a fixed 1500 CE → now window, with small padding
- if(name==="Modern Era")return eraWindow(ago(1500),0);
+ if(name==="Modern")return eraWindow(ago(1500),0);
  const es=ev.filter(e=>e.era===name),hi=Math.max(...es.map(e=>e.t)),lo=Math.min(...es.map(e=>e.end!=null?e.end:e.t)),pad=(hi-lo)*0.08;
  let nL=hi+pad,nR=lo-pad,s=nL-nR;if(s>=MAXSPAN*.9999)return[MAX*1.02,-MAX*0.02];
  const loB=-.05*s,hiB=MAX+.05*s;if(nR<loB){nL+=loB-nR;nR=loB}if(nL>hiB){nR-=nL-hiB;nL=hiB}return[nL,nR]}
@@ -317,7 +317,7 @@ if(/demo=1/.test(location.search+location.hash)){L=7e8;R=-5e8;panel.style.transi
 if(q.has('center')||q.has('year')||q.has('span')){const s=Math.min(MAXSPAN,Math.max(MIN_SPAN,+(q.get('span')||L-R))),m=q.has('year')?NOW-q.get('year'):q.has('center')?+q.get('center'):(L+R)/2;L=m+s/2;R=m-s/2;clampView();draw()}
 // ?focus=life|earth|cosmos|humanity|hominid|farming|modern — enter that era's focus immediately (no animation, for screenshots)
 // ?focus=humanity is kept as an alias for Hominid Era
-if(q.has('focus')){const s=String(q.get('focus')||"").toLowerCase().replace(/\s+/g,""),alias={humanity:"Hominid Era",hominid:"Hominid Era",farming:"Farming",modern:"Modern Era"},n=alias[s]?eras.find(e=>e[0]===alias[s]):eras.find(e=>{const k=e[0].toLowerCase();return k.replace(/\s+/g,"")===s||k.startsWith(s)});if(n)setFocus(n[0],false)}
+if(q.has('focus')){const s=String(q.get('focus')||"").toLowerCase().replace(/\s+/g,""),alias={humanity:"Hominid Era",hominid:"Hominid Era",farming:"Farming",modern:"Modern"},n=alias[s]?eras.find(e=>e[0]===alias[s]):eras.find(e=>{const k=e[0].toLowerCase();return k.replace(/\s+/g,"")===s||k.startsWith(s)});if(n)setFocus(n[0],false)}
 window.DT={get focus(){return eraFocus},get L(){return L},get R(){return R},get sel(){return sel},get hidden(){return hidden},get W(){return W},get H(){return H},
  visible(){return hits.map(h=>ev[h[2]].n)},panelOpen(){return panel.classList.contains('open')},get bandHits(){return bandHits},get hits(){return hits},setFocus,reset,exitFocus,closePanel,draw,eraFit,ev,eras};
 </script></body></html>
