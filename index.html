@@ -28,7 +28,7 @@ const MAX=13.8e9, MAXSPAN=MAX*1.04, MIN_SPAN=1; // all times are "years ago" (fl
 const NOW=(()=>{const d=new Date(),y=d.getFullYear(),a=new Date(y,0,1);return y+(d-a)/(new Date(y+1,0,1)-a)})();
 const cal=(y,m=1,d=1)=>y+(Date.UTC(y,m-1,d)-Date.UTC(y,0,1))/(Date.UTC(y+1,0,1)-Date.UTC(y,0,1)); // fractional CE year
 const ago=y=>NOW-y, bce=n=>1-n; // astronomical year of n BCE
-const eras=[["Cosmos",13.8e9,"#5b6cff"],["Earth",4.54e9,"#2fa3a8"],["Life",3.8e9,"#4cc46a"],["Hominid Era",3.9e6,"#ffb347"],["1st Civilizations",12e3,"#9acd32",ago(1500)],["Modern",ago(1500),"#e06bc8"]];
+const eras=[["Cosmos",13.8e9,"#5b6cff"],["Earth",4.54e9,"#2fa3a8"],["Life",3.8e9,"#4cc46a"],["Hominid Era",3.9e6,"#ffb347"],["First Civilizations",12e3,"#9acd32",ago(1500)],["Modern",ago(1500),"#e06bc8"]];
 const CORE="Big Bang|First stars|Milky Way forms|Sun forms|Earth forms|First life|Great Oxygenation|Cambrian explosion|First dinosaurs|Dinosaur extinction|Australopithecus afarensis|Lucy|Homo erectus|First out of Africa|Controlled fire|Homo sapiens|Göbekli Tepe|First farming|Çatalhöyük|Uruk|Cuneiform writing|Great Pyramid of Giza|Roman Empire|Printing press|Industrial Revolution|Moon landing".split("|");
 const E=(n,t,txt,era,date,end)=>({n,t,txt,era,date,end,rank:CORE.includes(n)?1:2}); // rank 1 = headline events, placed first when crowded
 const ev=[
@@ -91,47 +91,47 @@ E("Cave art",45e3,"People begin painting animals and signs on cave walls in Euro
 E("Lascaux",17e3,"Artists paint the famous halls of bulls and horses at Lascaux in what is now France.","Hominid Era","c. 17,000 years ago"),
 E("First Humans in the Americas",16e3,"The first humans reach the Americas and spread throughout the continents.","Hominid Era","c. 16,000 years ago"),
 E("Dogs domesticated",15e3,"Wolves are domesticated, becoming the first animals to live alongside humans.","Hominid Era","c. 15,000 years ago"),
-E("End of the Ice Age",11700,"The Pleistocene glaciations end and the Holocene, our current warm epoch, begins.","1st Civilizations","c. 11,700 years ago"),
-E("Younger Dryas",12900,"A sudden return to ice-age conditions that may have pushed people toward farming.","1st Civilizations","c. 12,900 years ago"),
-E("Göbekli Tepe",11600,"Hunter-gatherers raise monumental carved-stone pillars at Göbekli Tepe in Anatolia, before farming takes hold.","1st Civilizations","c. 11,600 years ago"),
-E("First farming",11500,"People in the Fertile Crescent begin cultivating wheat and barley, the start of agriculture.","1st Civilizations","c. 11,500 years ago"),
-E("Goats and sheep domesticated",10500,"Goats and sheep are domesticated in the Near East, among the first livestock animals.","1st Civilizations","c. 10,500 years ago"),
-E("Jericho's walls",1e4,"A stone wall and tower are built at Jericho, among the first permanent towns.","1st Civilizations","c. 10,000 years ago (~8000 BCE)"),
-E("Rice farming",9500,"Rice is cultivated in China's Yangtze valley, beginning a major East Asian farming tradition.","1st Civilizations","c. 9,500 years ago"),
-E("Maize domesticated",9000,"Maize is domesticated in Mexico, later becoming a staple across the Americas.","1st Civilizations","c. 9,000 years ago"),
-E("Çatalhöyük",9000,"A dense farming town of several thousand people flourishes at Çatalhöyük in Anatolia.","1st Civilizations","c. 9,000 years ago"),
-E("Copper smelting",7500,"People begin smelting copper, the first metal to be extracted from ore.","1st Civilizations","c. 7,500 years ago"),
-E("Horses and the plow",6000,"Horses are domesticated on the steppe, and the plow comes into use, transforming farming and transport.","1st Civilizations","c. 6,000 years ago (~4000 BCE)"),
-E("Uruk",ago(bce(3500)),"Uruk in Mesopotamia grows into the first true city, a center of temples, trade, and administration.","1st Civilizations","c. 3500 BCE"),
-E("Cuneiform writing",ago(bce(3200)),"Cuneiform writing emerges in Mesopotamia, the earliest known script.","1st Civilizations","c. 3200 BCE"),
-E("Egypt unified",ago(bce(3100)),"Upper and Lower Egypt are unified under a single king, beginning the pharaonic state.","1st Civilizations","c. 3100 BCE"),
-E("Bronze Age",ago(bce(3000)),"Societies in Mesopotamia and beyond begin making tools and weapons from bronze.","1st Civilizations","c. 3000 BCE"),
-E("Indus Valley cities",ago(bce(2600)),"Planned cities such as Mohenjo-daro flourish in the Indus Valley.","1st Civilizations","c. 2600 BCE"),
-E("Great Pyramid of Giza",ago(bce(2560)),"The Great Pyramid of Khufu is completed at Giza, Egypt.","1st Civilizations","c. 2560 BCE"),
-E("Buddha and Confucius",ago(bce(500)),"The Buddha and Confucius teach in India and China, part of a wider flowering of philosophy.","1st Civilizations","c. 500 BCE"),
-E("Founding of Rome",ago(cal(bce(753),4,21)),"According to tradition, Romulus founds the city of Rome on April 21, 753 BCE — the legendary date still marked as Rome's birthday.","1st Civilizations","April 21, 753 BCE (traditional)"),
+E("End of the Ice Age",11700,"The Pleistocene glaciations end and the Holocene, our current warm epoch, begins.","First Civilizations","c. 11,700 years ago"),
+E("Younger Dryas",12900,"A sudden return to ice-age conditions that may have pushed people toward farming.","First Civilizations","c. 12,900 years ago"),
+E("Göbekli Tepe",11600,"Hunter-gatherers raise monumental carved-stone pillars at Göbekli Tepe in Anatolia, before farming takes hold.","First Civilizations","c. 11,600 years ago"),
+E("First farming",11500,"People in the Fertile Crescent begin cultivating wheat and barley, the start of agriculture.","First Civilizations","c. 11,500 years ago"),
+E("Goats and sheep domesticated",10500,"Goats and sheep are domesticated in the Near East, among the first livestock animals.","First Civilizations","c. 10,500 years ago"),
+E("Jericho's walls",1e4,"A stone wall and tower are built at Jericho, among the first permanent towns.","First Civilizations","c. 10,000 years ago (~8000 BCE)"),
+E("Rice farming",9500,"Rice is cultivated in China's Yangtze valley, beginning a major East Asian farming tradition.","First Civilizations","c. 9,500 years ago"),
+E("Maize domesticated",9000,"Maize is domesticated in Mexico, later becoming a staple across the Americas.","First Civilizations","c. 9,000 years ago"),
+E("Çatalhöyük",9000,"A dense farming town of several thousand people flourishes at Çatalhöyük in Anatolia.","First Civilizations","c. 9,000 years ago"),
+E("Copper smelting",7500,"People begin smelting copper, the first metal to be extracted from ore.","First Civilizations","c. 7,500 years ago"),
+E("Horses and the plow",6000,"Horses are domesticated on the steppe, and the plow comes into use, transforming farming and transport.","First Civilizations","c. 6,000 years ago (~4000 BCE)"),
+E("Uruk",ago(bce(3500)),"Uruk in Mesopotamia grows into the first true city, a center of temples, trade, and administration.","First Civilizations","c. 3500 BCE"),
+E("Cuneiform writing",ago(bce(3200)),"Cuneiform writing emerges in Mesopotamia, the earliest known script.","First Civilizations","c. 3200 BCE"),
+E("Egypt unified",ago(bce(3100)),"Upper and Lower Egypt are unified under a single king, beginning the pharaonic state.","First Civilizations","c. 3100 BCE"),
+E("Bronze Age",ago(bce(3000)),"Societies in Mesopotamia and beyond begin making tools and weapons from bronze.","First Civilizations","c. 3000 BCE"),
+E("Indus Valley cities",ago(bce(2600)),"Planned cities such as Mohenjo-daro flourish in the Indus Valley.","First Civilizations","c. 2600 BCE"),
+E("Great Pyramid of Giza",ago(bce(2560)),"The Great Pyramid of Khufu is completed at Giza, Egypt.","First Civilizations","c. 2560 BCE"),
+E("Buddha and Confucius",ago(bce(500)),"The Buddha and Confucius teach in India and China, part of a wider flowering of philosophy.","First Civilizations","c. 500 BCE"),
+E("Founding of Rome",ago(cal(bce(753),4,21)),"According to tradition, Romulus founds the city of Rome on April 21, 753 BCE — the legendary date still marked as Rome's birthday.","First Civilizations","April 21, 753 BCE (traditional)"),
 E("First burials",100e3,"The earliest widely accepted intentional human burials appear, at sites such as Qafzeh and Skhul.","Hominid Era","c. 100,000 years ago"),
 E("Shell beads",75e3,"People in southern Africa, at sites such as Blombos Cave, pierce and wear shell beads as some of the earliest known jewelry.","Hominid Era","c. 75,000 years ago"),
 E("Toba eruption",74e3,"The Toba supervolcano in Sumatra erupts in one of the largest eruptions of the Quaternary, with debated effects on human populations.","Hominid Era","c. 74,000 years ago"),
 E("Neanderthal extinction",40e3,"Neanderthals disappear from the fossil record, leaving Homo sapiens as the last surviving human species.","Hominid Era","c. 40,000 years ago"),
 E("First pottery",20e3,"Hunter-gatherers in East Asia, at sites such as Xianrendong Cave, make the earliest known pottery.","Hominid Era","c. 20,000 years ago"),
-E("The wheel",ago(bce(3500)),"The wheel is invented in Mesopotamia, first used for pottery and soon after for vehicles.","1st Civilizations","c. 3500 BCE"),
-E("Sargon of Akkad",ago(bce(2334)),"Sargon of Akkad founds what is often called the first empire, uniting city-states of Mesopotamia under Akkadian rule.","1st Civilizations","c. 2334 BCE"),
-E("Code of Hammurabi",ago(bce(1754)),"King Hammurabi of Babylon issues one of the earliest and most complete written law codes.","1st Civilizations","c. 1754 BCE"),
-E("Shang dynasty",ago(bce(1600)),"The Shang dynasty rules in China, leaving the earliest substantial Chinese written records.","1st Civilizations","c. 1600 BCE"),
-E("Iron Age",ago(bce(1200)),"Iron working spreads in the eastern Mediterranean and Near East, beginning the Iron Age.","1st Civilizations","c. 1200 BCE"),
-E("Olmec civilization",ago(bce(1200)),"The Olmec civilization rises in Mesoamerica, among the earliest complex societies of the Americas.","1st Civilizations","c. 1200 BCE"),
-E("Athenian democracy",ago(bce(508)),"Cleisthenes' reforms in Athens establish a form of citizen democracy that will shape later political thought.","1st Civilizations","508 BCE"),
-E("Alexander the Great",ago(bce(330)),"Alexander the Great completes the conquest of the Persian Empire, spreading Greek culture from Greece to the Indus.","1st Civilizations","c. 330 BCE"),
-E("Qin unifies China",ago(bce(221)),"Qin Shi Huang unifies warring states into the first Chinese empire and standardizes writing, currency, and measures.","1st Civilizations","221 BCE"),
-E("Silk Road",ago(bce(130)),"The Han dynasty opens regular trade routes across Central Asia, beginning the Silk Road linking China to the Mediterranean world.","1st Civilizations","c. 130 BCE"),
-E("Birth of Islam",ago(610),"Muhammad receives his first revelations in Mecca, marking the beginning of Islam.","1st Civilizations","610 CE"),
-E("Mongol Empire",ago(1206),"Temüjin is proclaimed Genghis Khan, founding the Mongol Empire, later the largest contiguous land empire in history.","1st Civilizations","1206"),
-E("Roman Empire",ago(cal(-26,1,16)),"Octavian is granted the title Augustus in 27 BCE, founding the Roman Empire, which endures in the West until Romulus Augustulus is deposed in 476 CE.","1st Civilizations","January 16, 27 BCE – September 4, 476 CE",ago(cal(476,9,4))),
-E("Magna Carta",ago(cal(1215,6,15)),"English barons force King John to accept the Magna Carta, a landmark in the rule of law.","1st Civilizations","June 15, 1215"),
-E("Black Death",ago(1347),"The Black Death reaches Europe and kills roughly a third of the population.","1st Civilizations","1347"),
-E("Printing press",ago(1440),"Johannes Gutenberg develops movable-type printing in Mainz.","1st Civilizations","c. 1440"),
-E("Columbus reaches the Americas",ago(cal(1492,10,12)),"Christopher Columbus makes landfall in the Bahamas.","1st Civilizations","October 12, 1492"),
+E("The wheel",ago(bce(3500)),"The wheel is invented in Mesopotamia, first used for pottery and soon after for vehicles.","First Civilizations","c. 3500 BCE"),
+E("Sargon of Akkad",ago(bce(2334)),"Sargon of Akkad founds what is often called the first empire, uniting city-states of Mesopotamia under Akkadian rule.","First Civilizations","c. 2334 BCE"),
+E("Code of Hammurabi",ago(bce(1754)),"King Hammurabi of Babylon issues one of the earliest and most complete written law codes.","First Civilizations","c. 1754 BCE"),
+E("Shang dynasty",ago(bce(1600)),"The Shang dynasty rules in China, leaving the earliest substantial Chinese written records.","First Civilizations","c. 1600 BCE"),
+E("Iron Age",ago(bce(1200)),"Iron working spreads in the eastern Mediterranean and Near East, beginning the Iron Age.","First Civilizations","c. 1200 BCE"),
+E("Olmec civilization",ago(bce(1200)),"The Olmec civilization rises in Mesoamerica, among the earliest complex societies of the Americas.","First Civilizations","c. 1200 BCE"),
+E("Athenian democracy",ago(bce(508)),"Cleisthenes' reforms in Athens establish a form of citizen democracy that will shape later political thought.","First Civilizations","508 BCE"),
+E("Alexander the Great",ago(bce(330)),"Alexander the Great completes the conquest of the Persian Empire, spreading Greek culture from Greece to the Indus.","First Civilizations","c. 330 BCE"),
+E("Qin unifies China",ago(bce(221)),"Qin Shi Huang unifies warring states into the first Chinese empire and standardizes writing, currency, and measures.","First Civilizations","221 BCE"),
+E("Silk Road",ago(bce(130)),"The Han dynasty opens regular trade routes across Central Asia, beginning the Silk Road linking China to the Mediterranean world.","First Civilizations","c. 130 BCE"),
+E("Birth of Islam",ago(610),"Muhammad receives his first revelations in Mecca, marking the beginning of Islam.","First Civilizations","610 CE"),
+E("Mongol Empire",ago(1206),"Temüjin is proclaimed Genghis Khan, founding the Mongol Empire, later the largest contiguous land empire in history.","First Civilizations","1206"),
+E("Roman Empire",ago(cal(-26,1,16)),"Octavian is granted the title Augustus in 27 BCE, founding the Roman Empire, which endures in the West until Romulus Augustulus is deposed in 476 CE.","First Civilizations","January 16, 27 BCE – September 4, 476 CE",ago(cal(476,9,4))),
+E("Magna Carta",ago(cal(1215,6,15)),"English barons force King John to accept the Magna Carta, a landmark in the rule of law.","First Civilizations","June 15, 1215"),
+E("Black Death",ago(1347),"The Black Death reaches Europe and kills roughly a third of the population.","First Civilizations","1347"),
+E("Printing press",ago(1440),"Johannes Gutenberg develops movable-type printing in Mainz.","First Civilizations","c. 1440"),
+E("Columbus reaches the Americas",ago(cal(1492,10,12)),"Christopher Columbus makes landfall in the Bahamas.","First Civilizations","October 12, 1492"),
 E("Scientific Revolution",ago(1543),"Nicolaus Copernicus publishes On the Revolutions of the Heavenly Spheres, a starting point of the Scientific Revolution.","Modern","1543"),
 E("Newton's Principia",ago(cal(1687,7,5)),"Isaac Newton publishes his laws of motion and universal gravitation.","Modern","July 5, 1687"),
 E("Industrial Revolution",ago(1760),"Steam power and machines transform how humans live and work.","Modern","c. 1760"),
@@ -202,8 +202,8 @@ function draw(){if(!W)return;x.clearRect(0,0,W,H);
  const p0=px(0);if(calMode&&p0>=0&&p0<=W){x.strokeStyle="rgba(255,207,138,.35)";x.setLineDash([3,4]);x.beginPath();x.moveTo(p0,20);x.lineTo(p0,axY);x.stroke();x.setLineDash([]);x.fillStyle="#ffcf8a";x.fillText("Now",Math.min(W-16,Math.max(16,p0)),axY+38)}
  bandHits=[];
  const slivers=[];
- const SLIVER_ERAS=new Set(["Hominid Era","1st Civilizations","Modern"]);
- const SLIVER_MIN={ "Hominid Era":{"1st Civilizations":10,"Modern":5}, "1st Civilizations":{"Modern":8} };
+ const SLIVER_ERAS=new Set(["Hominid Era","First Civilizations","Modern"]);
+ const SLIVER_MIN={ "Hominid Era":{"First Civilizations":10,"Modern":5}, "First Civilizations":{"Modern":8} };
  const bandStep=24,chipH=22;
  eras.forEach((e,i)=>{
   const eraStart=e[1],eraEnd=e[3]!=null?e[3]:0;
@@ -218,7 +218,7 @@ function draw(){if(!W)return;x.clearRect(0,0,W,H);
   if(sliverMode){
     const sw=Math.max(sliverMin,vis?b-a:Math.max(0,trueW));
     let sx=Math.max(0,Math.min(W-sw-1,vis?b-sw:rawB-sw));
-    if(eraFocus==="1st Civilizations"&&e[0]==="Modern")sx=W-sw-1;
+    if(eraFocus==="First Civilizations"&&e[0]==="Modern")sx=W-sw-1;
     x.save();
     x.shadowColor=e[2];x.shadowBlur=16;
     x.fillStyle=e[2];x.fillRect(sx,y,sw,chipH);
@@ -277,7 +277,7 @@ function draw(){if(!W)return;x.clearRect(0,0,W,H);
  const mid=Math.min(MAX,Math.max(0,tx(W/2)));let cur=eras.filter(e=>e[1]>=mid).map(e=>e[0]);if(!cur.length)cur=["Cosmos"];
  const lo=Math.max(R,0),hi=Math.min(L,MAX),ptl=t=>calMode?(t<.5?"Now":yearLabel(Math.floor(NOW-t),NOW-hi<1)):fmtAgo(t,(hi-lo)/50);
  const view="Viewing: <b>"+spanText(Math.max(0,hi-lo))+"</b> <span class=r>("+ptl(hi)+" → "+ptl(lo)+")</span>";
- const NESTED_PARENT={"1st Civilizations":"Hominid Era","Modern":"Hominid Era"};
+ const NESTED_PARENT={"First Civilizations":"Hominid Era","Modern":"Hominid Era"};
  const focusLabel=NESTED_PARENT[eraFocus]?NESTED_PARENT[eraFocus]+" › <span>"+eraFocus+"</span>":"<span>"+eraFocus+"</span>";
  document.getElementById('crumb').innerHTML=eraFocus?("Focus: "+focusLabel+" <span class=showall title=\"All Time\">Show all</span> &nbsp;·&nbsp; "+view):cur.map((n,i)=>i==cur.length-1?"<span>"+n+"</span>":n).join(" › ")+" &nbsp;·&nbsp; "+view;
 }
@@ -292,7 +292,7 @@ function eraFit(name){
  // Hominid Era opens on a fixed ~4 Mya → now window (not a fit of all its events), with left padding so Australopithecus stays visible
  if(name==="Hominid Era")return eraWindow(4e6,0);
  // Agrarian Civilizations: Younger Dryas (~12,900 years ago) through 1500 CE, where Modern begins
- if(name==="1st Civilizations")return eraWindow(12900,ago(1500));
+ if(name==="First Civilizations")return eraWindow(12900,ago(1500));
  // Modern Era opens on a fixed 1500 CE → now window, with small padding
  if(name==="Modern")return eraWindow(ago(1500),0);
  const es=ev.filter(e=>e.era===name),hi=Math.max(...es.map(e=>e.t)),lo=Math.min(...es.map(e=>e.end!=null?e.end:e.t)),pad=(hi-lo)*0.08;
@@ -323,7 +323,7 @@ if(/demo=1/.test(location.search+location.hash)){L=7e8;R=-5e8;panel.style.transi
 if(q.has('center')||q.has('year')||q.has('span')){const s=Math.min(MAXSPAN,Math.max(MIN_SPAN,+(q.get('span')||L-R))),m=q.has('year')?NOW-q.get('year'):q.has('center')?+q.get('center'):(L+R)/2;L=m+s/2;R=m-s/2;clampView();draw()}
 // ?focus=life|earth|cosmos|humanity|hominid|farming|agrarian|civilizations|modern — enter that era's focus immediately (no animation, for screenshots)
 // ?focus=humanity is kept as an alias for Hominid Era; ?focus=farming|agrarian|civilizations map to Agrarian Civilizations
-if(q.has('focus')){const s=String(q.get('focus')||"").toLowerCase().replace(/\s+/g,""),alias={humanity:"Hominid Era",hominid:"Hominid Era",farming:"1st Civilizations",agrarian:"1st Civilizations",civilizations:"1st Civilizations",modern:"Modern"},n=alias[s]?eras.find(e=>e[0]===alias[s]):eras.find(e=>{const k=e[0].toLowerCase();return k.replace(/\s+/g,"")===s||k.startsWith(s)});if(n)setFocus(n[0],false)}
+if(q.has('focus')){const s=String(q.get('focus')||"").toLowerCase().replace(/\s+/g,""),alias={humanity:"Hominid Era",hominid:"Hominid Era",farming:"First Civilizations",agrarian:"First Civilizations",civilizations:"First Civilizations",modern:"Modern"},n=alias[s]?eras.find(e=>e[0]===alias[s]):eras.find(e=>{const k=e[0].toLowerCase();return k.replace(/\s+/g,"")===s||k.startsWith(s)});if(n)setFocus(n[0],false)}
 window.DT={get focus(){return eraFocus},get L(){return L},get R(){return R},get sel(){return sel},get hidden(){return hidden},get W(){return W},get H(){return H},
  visible(){return hits.map(h=>ev[h[2]].n)},panelOpen(){return panel.classList.contains('open')},get bandHits(){return bandHits},get hits(){return hits},setFocus,reset,exitFocus,closePanel,draw,eraFit,ev,eras};
 </script></body></html>
