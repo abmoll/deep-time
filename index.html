@@ -9,7 +9,7 @@ header{padding:22px 36px 6px}h1{margin:0;font-size:42px;letter-spacing:6px;font-
 #crumb .showall{color:#ffcf8a;font-weight:500;cursor:pointer;margin-left:10px;font-size:13px;letter-spacing:0;border-bottom:1px solid rgba(255,207,138,.45)}
 #crumb .showall:hover{color:#fff}
 #wrap{position:relative;margin:10px 36px;height:520px;border:1px solid #2a2f55;border-radius:12px;background:rgba(10,12,30,.6);box-shadow:0 0 60px rgba(80,100,255,.15) inset}
-canvas{width:100%;height:100%;cursor:grab;display:block}
+canvas{width:100%;height:100%;cursor:default;display:block}
 #ctl{position:static;display:flex;gap:6px;flex-shrink:0}
 #ctl button{background:#1c2148;color:#fff;border:1px solid #3d4590;border-radius:6px;padding:6px 12px;font-size:16px;cursor:pointer}
 #panel{position:fixed;top:0;right:-380px;width:340px;height:100%;background:linear-gradient(180deg,#151a3a,#0a0c1c);border-left:1px solid #3d4590;padding:40px 24px;box-sizing:border-box;transition:right .35s;font-family:system-ui;box-shadow:-20px 0 60px #000}
@@ -18,8 +18,8 @@ canvas{width:100%;height:100%;cursor:grab;display:block}
 #panel .w{margin-top:20px;background:linear-gradient(90deg,#ff7a3d,#ff3d7a);border:0;color:#fff;padding:12px 20px;border-radius:24px;font-size:15px;cursor:pointer}
 #panel .x{position:absolute;top:12px;right:16px;background:none;border:0;color:#aaa;font-size:24px;cursor:pointer}
 </style></head><body>
-<header><h1>DEEP TIME</h1><div class="tag">Zoom through 13.8 billion years</div></header>
-<div id="bar"><div id="crumb"></div><div id="ctl"><button id="zi">+</button><button id="zo">−</button><button id="rs">Reset</button></div></div>
+<header><h1>DEEP TIME</h1><div class="tag">13.8 billion years of history</div></header>
+<div id="bar"><div id="crumb"></div><div id="ctl"><button id="zi">+</button><button id="zo">−</button><button id="rs" title="All Time" aria-label="All Time">All Time</button></div></div>
 <div id="wrap"><canvas id="c"></canvas></div>
 <div id="panel"><button class="x" id="px">×</button><div class="d" id="pd"></div><h2 id="pt"></h2><p id="pp"></p><button class="w">▶ Watch the episode</button></div>
 <script>
@@ -233,7 +233,7 @@ function draw(){if(!W)return;x.clearRect(0,0,W,H);
   if(q!==p){x.fillStyle="rgba(255,184,107,.35)";x.fillRect(p,y-3,q-p,6);x.beginPath();x.moveTo(q,y+4);x.lineTo(q,axY);x.stroke()}
   x.fillStyle=sel===i?"#ff5f7a":"#ffcf8a";x.shadowColor="#ffb86b";x.shadowBlur=14;x.beginPath();x.arc(p,y,7,0,7);x.fill();x.shadowBlur=0;
   x.fillStyle="#fff";x.fillText(e.n,mid,y-14);hits.push([p,y,i])});
- if(hidden){x.textAlign="left";x.font="11px system-ui";x.fillStyle="#7f88b8";x.fillText(`+${hidden} more event${hidden>1?"s":""} — zoom in`,10,H-10)}
+ if(hidden){x.textAlign="left";x.font="11px system-ui";x.fillStyle="#7f88b8";x.fillText(`+${hidden} more event${hidden>1?"s":""} — click an era to see more`,10,H-10)}
  if(slivers.length){
   slivers.sort((a,b)=>a.y-b.y);
   x.font="600 13px system-ui";x.textAlign="left";
@@ -254,7 +254,7 @@ function draw(){if(!W)return;x.clearRect(0,0,W,H);
  const lo=Math.max(R,0),hi=Math.min(L,MAX),ptl=t=>calMode?(t<.5?"Now":yearLabel(Math.floor(NOW-t),NOW-hi<1)):fmtAgo(t,(hi-lo)/50);
  const view="Viewing: <b>"+spanText(Math.max(0,hi-lo))+"</b> <span class=r>("+ptl(hi)+" → "+ptl(lo)+")</span>";
  const focusLabel=eraFocus==="Modern Era"?"Hominid Era › <span>Modern Era</span>":"<span>"+eraFocus+"</span>";
- document.getElementById('crumb').innerHTML=eraFocus?("Focus: "+focusLabel+" <span class=showall title=\"Reset to show all eras\">Show all</span> &nbsp;·&nbsp; "+view):cur.map((n,i)=>i==cur.length-1?"<span>"+n+"</span>":n).join(" › ")+" &nbsp;·&nbsp; "+view;
+ document.getElementById('crumb').innerHTML=eraFocus?("Focus: "+focusLabel+" <span class=showall title=\"All Time\">Show all</span> &nbsp;·&nbsp; "+view):cur.map((n,i)=>i==cur.length-1?"<span>"+n+"</span>":n).join(" › ")+" &nbsp;·&nbsp; "+view;
 }
 function clampView(){const s=L-R;if(s>=MAXSPAN*.9999){fullView();return}const lo=-.05*s,hi=MAX+.05*s;if(R<lo){L+=lo-R;R=lo}if(L>hi){R-=L-hi;L=hi}}
 function cancelAnim(){if(anim){cancelAnimationFrame(anim);anim=0}}
@@ -279,22 +279,12 @@ function zoom(f,p){cancelAnim();const s=L-R,ns=Math.min(MAXSPAN,Math.max(MIN_SPA
  const t=tx(p),k=ns/s;L=t+(L-t)*k;R=t+(R-t)*k;clampView();draw()}
 function pan(dxPx){cancelAnim();const d=dxPx/W*(L-R);L+=d;R+=d;clampView();draw()}
 function reset(){exitFocus(true)}
-c.addEventListener('wheel',e=>{e.preventDefault();const r=c.getBoundingClientRect(),p=e.clientX-r.left;
- let dx=e.deltaX,dy=e.deltaY;const m=e.deltaMode===1?33:e.deltaMode===2?H:1;dx*=m;dy*=m;
- if(!e.ctrlKey&&Math.abs(dx)>Math.abs(dy)){pan(-dx);return} // horizontal trackpad scroll pans
- let f;if(e.ctrlKey)f=Math.exp(dy*.01);                         // pinch-zoom (ctrl+wheel)
- else if(Math.abs(dy)>=50)f=Math.pow(ZF,Math.sign(dy)*Math.max(1,Math.round(Math.abs(dy)/100))); // mouse wheel: fixed factor per notch
- else f=Math.exp(dy*Math.log(ZF)/100);                         // smooth trackpad scroll
- zoom(f,p)},{passive:false});
 function hitAt(ox,oy){const h=hits.find(h=>Math.hypot(h[0]-ox,h[1]-oy)<14);if(h)return{type:"ev",i:h[2]};const b=bandHits.find(b=>ox>=b.a&&ox<=b.b&&oy>=b.y&&oy<=b.y+b.h);if(b)return{type:"band",name:b.name}}
-let drag=null,moved=0;c.onpointerdown=e=>{drag=e.clientX;moved=0;c.style.cursor="grabbing";c.setPointerCapture(e.pointerId)};
-c.onpointerup=c.onpointercancel=()=>{drag=null;c.style.cursor="grab"};
 c.onpointermove=e=>{
- if(drag!==null){const dx=e.clientX-drag;drag=e.clientX;moved+=Math.abs(dx);pan(dx);return}
  const r=c.getBoundingClientRect(),ox=e.clientX-r.left,oy=e.clientY-r.top;
- c.style.cursor=hitAt(ox,oy)?"pointer":"grab";
+ c.style.cursor=hitAt(ox,oy)?"pointer":"default";
 };
-c.onclick=e=>{if(moved>=5)return;const r=c.getBoundingClientRect(),ox=e.clientX-r.left,oy=e.clientY-r.top,hit=hitAt(ox,oy);
+c.onclick=e=>{const r=c.getBoundingClientRect(),ox=e.clientX-r.left,oy=e.clientY-r.top,hit=hitAt(ox,oy);
  if(hit&&hit.type==="ev"){open(hit.i);return}
  if(hit&&hit.type==="band"){setFocus(hit.name,true);return}
  closePanel(); // blank click closes the side panel only; it does not exit focus
@@ -312,6 +302,6 @@ if(q.has('center')||q.has('year')||q.has('span')){const s=Math.min(MAXSPAN,Math.
 // ?focus=life|earth|cosmos|humanity|hominid|modern — enter that era's focus immediately (no animation, for screenshots)
 // ?focus=humanity is kept as an alias for Hominid Era
 if(q.has('focus')){const s=String(q.get('focus')||"").toLowerCase().replace(/\s+/g,""),alias={humanity:"Hominid Era",hominid:"Hominid Era"},n=alias[s]?eras.find(e=>e[0]===alias[s]):eras.find(e=>{const k=e[0].toLowerCase();return k.replace(/\s+/g,"")===s||k.startsWith(s)});if(n)setFocus(n[0],false)}
-window.DT={get focus(){return eraFocus},get L(){return L},get R(){return R},get sel(){return sel},get hidden(){return hidden},get moved(){return moved},get W(){return W},get H(){return H},
+window.DT={get focus(){return eraFocus},get L(){return L},get R(){return R},get sel(){return sel},get hidden(){return hidden},get W(){return W},get H(){return H},
  visible(){return hits.map(h=>ev[h[2]].n)},panelOpen(){return panel.classList.contains('open')},get bandHits(){return bandHits},get hits(){return hits},setFocus,reset,exitFocus,closePanel,draw,eraFit,ev,eras};
 </script></body></html>
