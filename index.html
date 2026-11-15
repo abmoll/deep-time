@@ -28,8 +28,8 @@ const MAX=13.8e9, MAXSPAN=MAX*1.04, MIN_SPAN=1, ZF=1.75; // all times are "years
 const NOW=(()=>{const d=new Date(),y=d.getFullYear(),a=new Date(y,0,1);return y+(d-a)/(new Date(y+1,0,1)-a)})();
 const cal=(y,m=1,d=1)=>y+(Date.UTC(y,m-1,d)-Date.UTC(y,0,1))/(Date.UTC(y+1,0,1)-Date.UTC(y,0,1)); // fractional CE year
 const ago=y=>NOW-y, bce=n=>1-n; // astronomical year of n BCE
-const eras=[["Cosmos",13.8e9,"#5b6cff"],["Earth",4.54e9,"#2fa3a8"],["Life",3.8e9,"#4cc46a"],["Humanity",3e5,"#ffb347"],["Modern Era",ago(1500),"#e06bc8"]];
-const CORE="Big Bang|First stars|Milky Way forms|Sun forms|Earth forms|First life|Great Oxygenation|Cambrian explosion|First dinosaurs|Dinosaur extinction|Homo sapiens|Agriculture|Writing|Roman Empire|Printing press|Industrial Revolution|Moon landing".split("|");
+const eras=[["Cosmos",13.8e9,"#5b6cff"],["Earth",4.54e9,"#2fa3a8"],["Life",3.8e9,"#4cc46a"],["Hominid Era",3.9e6,"#ffb347"],["Modern Era",ago(1500),"#e06bc8"]];
+const CORE="Big Bang|First stars|Milky Way forms|Sun forms|Earth forms|First life|Great Oxygenation|Cambrian explosion|First dinosaurs|Dinosaur extinction|Australopithecus afarensis|Lucy|Homo erectus|First out of Africa|Controlled fire|Homo sapiens|Agriculture|Writing|Roman Empire|Printing press|Industrial Revolution|Moon landing".split("|");
 const E=(n,t,txt,era,date,end)=>({n,t,txt,era,date,end,rank:CORE.includes(n)?1:2}); // rank 1 = headline events, placed first when crowded
 const ev=[
 // Cosmos
@@ -71,42 +71,55 @@ E("First flowering plants",130e6,"Flowering plants, the angiosperms, appear and 
 E("Dinosaur extinction",66e6,"An asteroid impact at Chicxulub wipes out the non-avian dinosaurs and about three quarters of species.","Life"),
 E("First primates",55e6,"The first primates appear in the wake of the dinosaur extinction.","Life","c. 55 million years ago"),
 E("First hominins",7e6,"Early hominins, the lineage that will lead to humans, diverge from other African apes.","Life","c. 7 million years ago"),
-// Humanity
-E("Homo sapiens",3e5,"Anatomically modern humans appear in Africa.","Humanity"),
-E("Out of Africa",70e3,"A major migration of Homo sapiens out of Africa begins to populate the rest of the world.","Humanity","c. 70,000 years ago"),
-E("Cave art",45e3,"People begin painting animals and signs on cave walls in Europe and Southeast Asia.","Humanity","c. 45,000 years ago"),
-E("Lascaux",17e3,"Artists paint the famous halls of bulls and horses at Lascaux in what is now France.","Humanity","c. 17,000 years ago"),
-E("First Humans in the Americas",16e3,"The first humans reach the Americas and spread throughout the continents.","Humanity","c. 16,000 years ago"),
-E("Dogs domesticated",15e3,"Wolves are domesticated, becoming the first animals to live alongside humans.","Humanity","c. 15,000 years ago"),
-E("End of the Ice Age",11700,"The Pleistocene glaciations end and the Holocene, our current warm epoch, begins.","Humanity","c. 11,700 years ago"),
-E("Göbekli Tepe",ago(bce(9500)),"Hunter-gatherers raise carved-stone monuments at Göbekli Tepe in Anatolia.","Humanity","c. 9500 BCE"),
-E("Agriculture",1.2e4,"Humans begin farming and domesticating plants and animals.","Humanity"),
-E("First cities",ago(bce(3500)),"Uruk and other Mesopotamian settlements grow into the first true cities.","Humanity","c. 3500 BCE (~5,500 years ago)"),
-E("Bronze Age",ago(bce(3300)),"Societies in Mesopotamia and beyond begin making tools and weapons from bronze.","Humanity","c. 3300 BCE"),
-E("Writing",ago(bce(3200)),"Cuneiform writing emerges in Mesopotamia.","Humanity","c. 3200 BCE"),
-E("Pyramids of Giza",ago(bce(2560)),"The Great Pyramid of Khufu is completed at Giza, Egypt.","Humanity","c. 2560 BCE"),
-E("Buddha and Confucius",ago(bce(500)),"The Buddha and Confucius teach in India and China, part of a wider flowering of philosophy.","Humanity","c. 500 BCE"),
-E("Founding of Rome",ago(cal(bce(753),4,21)),"According to tradition, Romulus founds the city of Rome on April 21, 753 BCE — the legendary date still marked as Rome's birthday.","Humanity","April 21, 753 BCE (traditional)"),
-E("First burials",100e3,"The earliest widely accepted intentional human burials appear, at sites such as Qafzeh and Skhul.","Humanity","c. 100,000 years ago"),
-E("Shell beads",75e3,"People in southern Africa, at sites such as Blombos Cave, pierce and wear shell beads as some of the earliest known jewelry.","Humanity","c. 75,000 years ago"),
-E("Toba eruption",74e3,"The Toba supervolcano in Sumatra erupts in one of the largest eruptions of the Quaternary, with debated effects on human populations.","Humanity","c. 74,000 years ago"),
-E("Neanderthal extinction",40e3,"Neanderthals disappear from the fossil record, leaving Homo sapiens as the last surviving human species.","Humanity","c. 40,000 years ago"),
-E("First pottery",20e3,"Hunter-gatherers in East Asia, at sites such as Xianrendong Cave, make the earliest known pottery.","Humanity","c. 20,000 years ago"),
-E("The wheel",ago(bce(3500)),"The wheel is invented in Mesopotamia, first used for pottery and soon after for vehicles.","Humanity","c. 3500 BCE"),
-E("Sargon of Akkad",ago(bce(2334)),"Sargon of Akkad founds what is often called the first empire, uniting city-states of Mesopotamia under Akkadian rule.","Humanity","c. 2334 BCE"),
-E("Code of Hammurabi",ago(bce(1754)),"King Hammurabi of Babylon issues one of the earliest and most complete written law codes.","Humanity","c. 1754 BCE"),
-E("Iron Age",ago(bce(1200)),"Iron working spreads in the eastern Mediterranean and Near East, beginning the Iron Age.","Humanity","c. 1200 BCE"),
-E("Athenian democracy",ago(bce(508)),"Cleisthenes' reforms in Athens establish a form of citizen democracy that will shape later political thought.","Humanity","508 BCE"),
-E("Alexander the Great",ago(bce(330)),"Alexander the Great completes the conquest of the Persian Empire, spreading Greek culture from Greece to the Indus.","Humanity","c. 330 BCE"),
-E("Qin unifies China",ago(bce(221)),"Qin Shi Huang unifies warring states into the first Chinese empire and standardizes writing, currency, and measures.","Humanity","221 BCE"),
-E("Silk Road",ago(bce(130)),"The Han dynasty opens regular trade routes across Central Asia, beginning the Silk Road linking China to the Mediterranean world.","Humanity","c. 130 BCE"),
-E("Birth of Islam",ago(610),"Muhammad receives his first revelations in Mecca, marking the beginning of Islam.","Humanity","610 CE"),
-E("Mongol Empire",ago(1206),"Temüjin is proclaimed Genghis Khan, founding the Mongol Empire, later the largest contiguous land empire in history.","Humanity","1206"),
-E("Roman Empire",ago(cal(-26,1,16)),"Octavian is granted the title Augustus in 27 BCE, founding the Roman Empire, which endures in the West until Romulus Augustulus is deposed in 476 CE.","Humanity","January 16, 27 BCE – September 4, 476 CE",ago(cal(476,9,4))),
-E("Magna Carta",ago(cal(1215,6,15)),"English barons force King John to accept the Magna Carta, a landmark in the rule of law.","Humanity","June 15, 1215"),
-E("Black Death",ago(1347),"The Black Death reaches Europe and kills roughly a third of the population.","Humanity","1347"),
-E("Printing press",ago(1440),"Johannes Gutenberg develops movable-type printing in Mainz.","Humanity","c. 1440"),
-E("Columbus reaches the Americas",ago(cal(1492,10,12)),"Christopher Columbus makes landfall in the Bahamas.","Humanity","October 12, 1492"),
+// Hominid Era
+E("Australopithecus afarensis",3.9e6,"Australopithecus afarensis appears in East Africa, walking upright on two legs.","Hominid Era","c. 3.9 million years ago"),
+E("Laetoli footprints",3.66e6,"Hominins leave footprints in volcanic ash at Laetoli, Tanzania, clear evidence of bipedal walking.","Hominid Era","c. 3.66 million years ago"),
+E("First stone tools",3.3e6,"The earliest known stone tools are made at Lomekwi, Kenya, older than the genus Homo.","Hominid Era","c. 3.3 million years ago"),
+E("Lucy",3.2e6,"The famous partial skeleton of Lucy, an Australopithecus afarensis, lives in what is now Ethiopia.","Hominid Era","c. 3.2 million years ago"),
+E("Genus Homo emerges",2.8e6,"The genus Homo emerges, beginning the lineage that leads to modern humans.","Hominid Era","c. 2.8 million years ago"),
+E("Oldowan tools",2.6e6,"The Oldowan tradition of simple flaked stone tools becomes widespread in Africa.","Hominid Era","c. 2.6 million years ago"),
+E("Homo habilis",2.4e6,"Homo habilis, the handy man, appears, with a larger brain and regular use of stone tools.","Hominid Era","c. 2.4 million years ago"),
+E("Homo erectus",1.9e6,"Homo erectus appears, with human-like body proportions suited to long-distance walking and running.","Hominid Era","c. 1.9 million years ago"),
+E("First out of Africa",1.8e6,"Homo erectus reaches Dmanisi in Georgia, the earliest well-dated humans outside Africa.","Hominid Era","c. 1.8 million years ago"),
+E("Acheulean hand axes",1.76e6,"Hominins begin making carefully shaped Acheulean hand axes.","Hominid Era","c. 1.76 million years ago"),
+E("Controlled fire",1e6,"Hominins begin to control fire, with debated evidence from sites such as Wonderwerk Cave.","Hominid Era","c. 1 million years ago"),
+E("Homo heidelbergensis",700e3,"Homo heidelbergensis appears, a likely shared ancestor of modern humans and Neanderthals.","Hominid Era","c. 700,000 years ago"),
+E("Neanderthals and Denisovans",400e3,"The lineages of Neanderthals and Denisovans branch off from the line leading to modern humans.","Hominid Era","c. 400,000 years ago"),
+E("Homo sapiens",3e5,"Anatomically modern humans appear in Africa.","Hominid Era"),
+E("Out of Africa",70e3,"A major migration of Homo sapiens out of Africa begins to populate the rest of the world.","Hominid Era","c. 70,000 years ago"),
+E("Cave art",45e3,"People begin painting animals and signs on cave walls in Europe and Southeast Asia.","Hominid Era","c. 45,000 years ago"),
+E("Lascaux",17e3,"Artists paint the famous halls of bulls and horses at Lascaux in what is now France.","Hominid Era","c. 17,000 years ago"),
+E("First Humans in the Americas",16e3,"The first humans reach the Americas and spread throughout the continents.","Hominid Era","c. 16,000 years ago"),
+E("Dogs domesticated",15e3,"Wolves are domesticated, becoming the first animals to live alongside humans.","Hominid Era","c. 15,000 years ago"),
+E("End of the Ice Age",11700,"The Pleistocene glaciations end and the Holocene, our current warm epoch, begins.","Hominid Era","c. 11,700 years ago"),
+E("Göbekli Tepe",ago(bce(9500)),"Hunter-gatherers raise carved-stone monuments at Göbekli Tepe in Anatolia.","Hominid Era","c. 9500 BCE"),
+E("Agriculture",1.2e4,"Humans begin farming and domesticating plants and animals.","Hominid Era"),
+E("First cities",ago(bce(3500)),"Uruk and other Mesopotamian settlements grow into the first true cities.","Hominid Era","c. 3500 BCE (~5,500 years ago)"),
+E("Bronze Age",ago(bce(3300)),"Societies in Mesopotamia and beyond begin making tools and weapons from bronze.","Hominid Era","c. 3300 BCE"),
+E("Writing",ago(bce(3200)),"Cuneiform writing emerges in Mesopotamia.","Hominid Era","c. 3200 BCE"),
+E("Pyramids of Giza",ago(bce(2560)),"The Great Pyramid of Khufu is completed at Giza, Egypt.","Hominid Era","c. 2560 BCE"),
+E("Buddha and Confucius",ago(bce(500)),"The Buddha and Confucius teach in India and China, part of a wider flowering of philosophy.","Hominid Era","c. 500 BCE"),
+E("Founding of Rome",ago(cal(bce(753),4,21)),"According to tradition, Romulus founds the city of Rome on April 21, 753 BCE — the legendary date still marked as Rome's birthday.","Hominid Era","April 21, 753 BCE (traditional)"),
+E("First burials",100e3,"The earliest widely accepted intentional human burials appear, at sites such as Qafzeh and Skhul.","Hominid Era","c. 100,000 years ago"),
+E("Shell beads",75e3,"People in southern Africa, at sites such as Blombos Cave, pierce and wear shell beads as some of the earliest known jewelry.","Hominid Era","c. 75,000 years ago"),
+E("Toba eruption",74e3,"The Toba supervolcano in Sumatra erupts in one of the largest eruptions of the Quaternary, with debated effects on human populations.","Hominid Era","c. 74,000 years ago"),
+E("Neanderthal extinction",40e3,"Neanderthals disappear from the fossil record, leaving Homo sapiens as the last surviving human species.","Hominid Era","c. 40,000 years ago"),
+E("First pottery",20e3,"Hunter-gatherers in East Asia, at sites such as Xianrendong Cave, make the earliest known pottery.","Hominid Era","c. 20,000 years ago"),
+E("The wheel",ago(bce(3500)),"The wheel is invented in Mesopotamia, first used for pottery and soon after for vehicles.","Hominid Era","c. 3500 BCE"),
+E("Sargon of Akkad",ago(bce(2334)),"Sargon of Akkad founds what is often called the first empire, uniting city-states of Mesopotamia under Akkadian rule.","Hominid Era","c. 2334 BCE"),
+E("Code of Hammurabi",ago(bce(1754)),"King Hammurabi of Babylon issues one of the earliest and most complete written law codes.","Hominid Era","c. 1754 BCE"),
+E("Iron Age",ago(bce(1200)),"Iron working spreads in the eastern Mediterranean and Near East, beginning the Iron Age.","Hominid Era","c. 1200 BCE"),
+E("Athenian democracy",ago(bce(508)),"Cleisthenes' reforms in Athens establish a form of citizen democracy that will shape later political thought.","Hominid Era","508 BCE"),
+E("Alexander the Great",ago(bce(330)),"Alexander the Great completes the conquest of the Persian Empire, spreading Greek culture from Greece to the Indus.","Hominid Era","c. 330 BCE"),
+E("Qin unifies China",ago(bce(221)),"Qin Shi Huang unifies warring states into the first Chinese empire and standardizes writing, currency, and measures.","Hominid Era","221 BCE"),
+E("Silk Road",ago(bce(130)),"The Han dynasty opens regular trade routes across Central Asia, beginning the Silk Road linking China to the Mediterranean world.","Hominid Era","c. 130 BCE"),
+E("Birth of Islam",ago(610),"Muhammad receives his first revelations in Mecca, marking the beginning of Islam.","Hominid Era","610 CE"),
+E("Mongol Empire",ago(1206),"Temüjin is proclaimed Genghis Khan, founding the Mongol Empire, later the largest contiguous land empire in history.","Hominid Era","1206"),
+E("Roman Empire",ago(cal(-26,1,16)),"Octavian is granted the title Augustus in 27 BCE, founding the Roman Empire, which endures in the West until Romulus Augustulus is deposed in 476 CE.","Hominid Era","January 16, 27 BCE – September 4, 476 CE",ago(cal(476,9,4))),
+E("Magna Carta",ago(cal(1215,6,15)),"English barons force King John to accept the Magna Carta, a landmark in the rule of law.","Hominid Era","June 15, 1215"),
+E("Black Death",ago(1347),"The Black Death reaches Europe and kills roughly a third of the population.","Hominid Era","1347"),
+E("Printing press",ago(1440),"Johannes Gutenberg develops movable-type printing in Mainz.","Hominid Era","c. 1440"),
+E("Columbus reaches the Americas",ago(cal(1492,10,12)),"Christopher Columbus makes landfall in the Bahamas.","Hominid Era","October 12, 1492"),
 E("Scientific Revolution",ago(1543),"Nicolaus Copernicus publishes On the Revolutions of the Heavenly Spheres, a starting point of the Scientific Revolution.","Modern Era","1543"),
 E("Newton's Principia",ago(cal(1687,7,5)),"Isaac Newton publishes his laws of motion and universal gravitation.","Modern Era","July 5, 1687"),
 E("Industrial Revolution",ago(1760),"Steam power and machines transform how humans live and work.","Modern Era","c. 1760"),
@@ -182,8 +195,8 @@ function draw(){if(!W)return;x.clearRect(0,0,W,H);
   const a=Math.max(0,rawA),b=Math.min(W,rawB),vis=rawB>0&&rawA<W&&b>a;
   x.font="bold 13px system-ui";x.textAlign="left";const tw=x.measureText(e[0]).width,chipW=tw+16,chipH=26;
   const trueW=rawB-rawA;
-  const sliverMin=(eraFocus==="Humanity"&&e[0]==="Modern Era")?6:3;
-  const sliverMode=(e[0]==="Humanity"||e[0]==="Modern Era")&&trueW<chipW&&rawB>0&&rawA<W;
+  const sliverMin=(eraFocus==="Hominid Era"&&e[0]==="Modern Era")?6:3;
+  const sliverMode=(e[0]==="Hominid Era"||e[0]==="Modern Era")&&trueW<chipW&&rawB>0&&rawA<W;
   if(sliverMode){
     const sw=Math.max(sliverMin,vis?b-a:Math.max(0,trueW)),sx=Math.max(0,Math.min(W-sw-1,vis?b-sw:rawB-sw));
     x.save();
@@ -240,7 +253,7 @@ function draw(){if(!W)return;x.clearRect(0,0,W,H);
  const mid=Math.min(MAX,Math.max(0,tx(W/2)));let cur=eras.filter(e=>e[1]>=mid).map(e=>e[0]);if(!cur.length)cur=["Cosmos"];
  const lo=Math.max(R,0),hi=Math.min(L,MAX),ptl=t=>calMode?(t<.5?"Now":yearLabel(Math.floor(NOW-t),NOW-hi<1)):fmtAgo(t,(hi-lo)/50);
  const view="Viewing: <b>"+spanText(Math.max(0,hi-lo))+"</b> <span class=r>("+ptl(hi)+" → "+ptl(lo)+")</span>";
- const focusLabel=eraFocus==="Modern Era"?"Humanity › <span>Modern Era</span>":"<span>"+eraFocus+"</span>";
+ const focusLabel=eraFocus==="Modern Era"?"Hominid Era › <span>Modern Era</span>":"<span>"+eraFocus+"</span>";
  document.getElementById('crumb').innerHTML=eraFocus?("Focus: "+focusLabel+" <span class=showall title=\"Reset to show all eras\">Show all</span> &nbsp;·&nbsp; "+view):cur.map((n,i)=>i==cur.length-1?"<span>"+n+"</span>":n).join(" › ")+" &nbsp;·&nbsp; "+view;
 }
 function clampView(){const s=L-R;if(s>=MAXSPAN*.9999){fullView();return}const lo=-.05*s,hi=MAX+.05*s;if(R<lo){L+=lo-R;R=lo}if(L>hi){R-=L-hi;L=hi}}
@@ -249,8 +262,8 @@ function easeInOut(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2}
 function animateTo(nL,nR,ms=600){cancelAnim();const sL=L,sR=R,t0=performance.now();
  (function step(now){const u=Math.min(1,(now-t0)/ms),e=easeInOut(u);L=sL+(nL-sL)*e;R=sR+(nR-sR)*e;draw();if(u<1)anim=requestAnimationFrame(step);else{L=nL;R=nR;anim=0;draw()}})(t0)}
 function eraFit(name){
- // Humanity opens on a fixed 300 kya → now window (not a fit of all its events), with left padding so Homo sapiens stays visible
- if(name==="Humanity"){const hi=3e5,lo=0,pad=(hi-lo)*0.08;let nL=hi+pad,nR=lo-pad,s=nL-nR;
+ // Hominid Era opens on a fixed ~4 Mya → now window (not a fit of all its events), with left padding so Australopithecus stays visible
+ if(name==="Hominid Era"){const hi=4e6,lo=0,pad=(hi-lo)*0.08;let nL=hi+pad,nR=lo-pad,s=nL-nR;
   const loB=-.05*s,hiB=MAX+.05*s;if(nR<loB){nL+=loB-nR;nR=loB}if(nL>hiB){nR-=nL-hiB;nL=hiB}return[nL,nR]}
  // Modern Era opens on a fixed 1500 CE → now window, with small padding
  if(name==="Modern Era"){const hi=ago(1500),lo=0,pad=(hi-lo)*0.08;let nL=hi+pad,nR=lo-pad,s=nL-nR;
@@ -296,8 +309,9 @@ const q=new URLSearchParams(location.search);
 if(/demo=1/.test(location.search+location.hash)){L=7e8;R=-5e8;panel.style.transition="none";open(ev.findIndex(e=>e.n=="Dinosaur extinction"))}
 // arbitrary view for testing/screenshots: ?center=<yearsAgo>|?year=<CE year>&span=<years>
 if(q.has('center')||q.has('year')||q.has('span')){const s=Math.min(MAXSPAN,Math.max(MIN_SPAN,+(q.get('span')||L-R))),m=q.has('year')?NOW-q.get('year'):q.has('center')?+q.get('center'):(L+R)/2;L=m+s/2;R=m-s/2;clampView();draw()}
-// ?focus=life|earth|cosmos|humanity|modern — enter that era's focus immediately (no animation, for screenshots)
-if(q.has('focus')){const s=String(q.get('focus')||"").toLowerCase().replace(/\s+/g,""),n=eras.find(e=>{const k=e[0].toLowerCase();return k.replace(/\s+/g,"")===s||k.startsWith(s)});if(n)setFocus(n[0],false)}
+// ?focus=life|earth|cosmos|humanity|hominid|modern — enter that era's focus immediately (no animation, for screenshots)
+// ?focus=humanity is kept as an alias for Hominid Era
+if(q.has('focus')){const s=String(q.get('focus')||"").toLowerCase().replace(/\s+/g,""),alias={humanity:"Hominid Era",hominid:"Hominid Era"},n=alias[s]?eras.find(e=>e[0]===alias[s]):eras.find(e=>{const k=e[0].toLowerCase();return k.replace(/\s+/g,"")===s||k.startsWith(s)});if(n)setFocus(n[0],false)}
 window.DT={get focus(){return eraFocus},get L(){return L},get R(){return R},get sel(){return sel},get hidden(){return hidden},get moved(){return moved},get W(){return W},get H(){return H},
  visible(){return hits.map(h=>ev[h[2]].n)},panelOpen(){return panel.classList.contains('open')},get bandHits(){return bandHits},get hits(){return hits},setFocus,reset,exitFocus,closePanel,draw,eraFit,ev,eras};
 </script></body></html>
