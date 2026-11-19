@@ -1,6 +1,15 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"><title>Deep Time</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#07080f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Deep Time">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
 <style>
-body{margin:0;background:radial-gradient(ellipse at 30% 20%,#1a1f3d 0%,#07080f 60%,#000 100%);color:#e8e6f0;font-family:Georgia,serif;overflow:hidden;height:100vh}
+html{background:#07080f}
+body{margin:0;background:radial-gradient(ellipse at 30% 20%,#1a1f3d 0%,#07080f 60%,#000 100%);color:#e8e6f0;font-family:Georgia,serif;overflow:hidden;height:100vh;height:100dvh;box-sizing:border-box;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
 header{padding:22px 36px 6px}h1{margin:0;font-size:42px;letter-spacing:6px;font-weight:400;background:linear-gradient(90deg,#fff,#9fb4ff,#ffb86b);-webkit-background-clip:text;color:transparent}
 .tag{color:#9aa0c0;font-style:italic;margin-top:4px}
 #bar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:8px 36px 0}
@@ -12,15 +21,15 @@ header{padding:22px 36px 6px}h1{margin:0;font-size:42px;letter-spacing:6px;font-
 canvas{width:100%;height:100%;cursor:default;display:block}
 #ctl{position:static;display:flex;gap:6px;flex-shrink:0}
 #ctl button{background:#1c2148;color:#fff;border:1px solid #3d4590;border-radius:6px;padding:6px 12px;font-size:16px;cursor:pointer}
-#panel{position:fixed;top:0;right:-380px;width:340px;height:100%;background:linear-gradient(180deg,#151a3a,#0a0c1c);border-left:1px solid #3d4590;padding:40px 24px;box-sizing:border-box;transition:right .35s;font-family:system-ui;box-shadow:-20px 0 60px #000}
+#panel{position:fixed;top:0;right:-380px;width:340px;height:100%;background:linear-gradient(180deg,#151a3a,#0a0c1c);border-left:1px solid #3d4590;padding:max(40px,calc(env(safe-area-inset-top,0px) + 28px)) max(24px,calc(env(safe-area-inset-right,0px) + 16px)) max(40px,env(safe-area-inset-bottom,0px)) 24px;box-sizing:border-box;transition:right .35s;font-family:system-ui;box-shadow:-20px 0 60px #000}
 #panel.open{right:0}#panel h2{font-family:Georgia;font-weight:400;font-size:28px;margin:10px 0}
 #panel .d{color:#ffb86b;font-size:15px;letter-spacing:1px}#panel p{line-height:1.6;color:#c9cbe0}
 #panel .w{margin-top:20px;background:linear-gradient(90deg,#ff7a3d,#ff3d7a);border:0;color:#fff;padding:12px 20px;border-radius:24px;font-size:15px;cursor:pointer}
 #panel .w.soon{background:#2a2f55;color:#8d92b8;cursor:default}
 #vm{position:fixed;inset:0;background:rgba(3,4,12,.88);display:none;align-items:center;justify-content:center;z-index:50}
 #vm.open{display:flex}#vm video{width:min(92vw,1100px);max-height:82vh;border-radius:10px;box-shadow:0 20px 80px #000;background:#000}
-#vm .x{position:absolute;top:16px;right:24px;background:none;border:0;color:#ddd;font-size:34px;cursor:pointer}
-#panel .x{position:absolute;top:12px;right:16px;background:none;border:0;color:#aaa;font-size:24px;cursor:pointer}
+#vm .x{position:absolute;top:max(16px,env(safe-area-inset-top,0px));right:max(24px,env(safe-area-inset-right,0px));background:none;border:0;color:#ddd;font-size:34px;cursor:pointer}
+#panel .x{position:absolute;top:max(12px,env(safe-area-inset-top,0px));right:max(16px,env(safe-area-inset-right,0px));background:none;border:0;color:#aaa;font-size:24px;cursor:pointer}
 </style></head><body>
 <header><h1>DEEP TIME</h1><div class="tag">13.8 billion years of history</div></header>
 <div id="bar"><div id="crumb"></div><div id="ctl"><button id="rs" title="All Time" aria-label="All Time">All Time</button></div></div>
@@ -332,4 +341,5 @@ if(q.has('center')||q.has('year')||q.has('span')){const s=Math.min(MAXSPAN,Math.
 if(q.has('focus')){const s=String(q.get('focus')||"").toLowerCase().replace(/\s+/g,""),alias={humanity:"Hominid Era",hominid:"Hominid Era",farming:"Early Civilizations",agrarian:"Early Civilizations",civilizations:"Early Civilizations",early:"Early Civilizations",modern:"Modern"},n=alias[s]?eras.find(e=>e[0]===alias[s]):eras.find(e=>{const k=e[0].toLowerCase();return k.replace(/\s+/g,"")===s||k.startsWith(s)});if(n)setFocus(n[0],false)}
 window.DT={get focus(){return eraFocus},get L(){return L},get R(){return R},get sel(){return sel},get hidden(){return hidden},get W(){return W},get H(){return H},
  visible(){return hits.map(h=>ev[h[2]].n)},panelOpen(){return panel.classList.contains('open')},get bandHits(){return bandHits},get hits(){return hits},setFocus,reset,exitFocus,closePanel,draw,eraFit,ev,eras};
+addEventListener('load',()=>{if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js')});
 </script></body></html>
