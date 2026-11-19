@@ -16,12 +16,17 @@ canvas{width:100%;height:100%;cursor:default;display:block}
 #panel.open{right:0}#panel h2{font-family:Georgia;font-weight:400;font-size:28px;margin:10px 0}
 #panel .d{color:#ffb86b;font-size:15px;letter-spacing:1px}#panel p{line-height:1.6;color:#c9cbe0}
 #panel .w{margin-top:20px;background:linear-gradient(90deg,#ff7a3d,#ff3d7a);border:0;color:#fff;padding:12px 20px;border-radius:24px;font-size:15px;cursor:pointer}
+#panel .w.soon{background:#2a2f55;color:#8d92b8;cursor:default}
+#vm{position:fixed;inset:0;background:rgba(3,4,12,.88);display:none;align-items:center;justify-content:center;z-index:50}
+#vm.open{display:flex}#vm video{width:min(92vw,1100px);max-height:82vh;border-radius:10px;box-shadow:0 20px 80px #000;background:#000}
+#vm .x{position:absolute;top:16px;right:24px;background:none;border:0;color:#ddd;font-size:34px;cursor:pointer}
 #panel .x{position:absolute;top:12px;right:16px;background:none;border:0;color:#aaa;font-size:24px;cursor:pointer}
 </style></head><body>
 <header><h1>DEEP TIME</h1><div class="tag">13.8 billion years of history</div></header>
 <div id="bar"><div id="crumb"></div><div id="ctl"><button id="rs" title="All Time" aria-label="All Time">All Time</button></div></div>
 <div id="wrap"><canvas id="c"></canvas></div>
-<div id="panel"><button class="x" id="px">×</button><div class="d" id="pd"></div><h2 id="pt"></h2><p id="pp"></p><button class="w">▶ Watch the episode</button></div>
+<div id="panel"><button class="x" id="px">×</button><div class="d" id="pd"></div><h2 id="pt"></h2><p id="pp"></p><button class="w" id="pw">▶ Watch the episode</button></div>
+<div id="vm"><button class="x" id="vx">×</button><video id="vv" controls playsinline preload="none"></video></div>
 <script>
 const MAX=13.8e9, MAXSPAN=MAX*1.04, MIN_SPAN=1; // all times are "years ago" (float64); MIN_SPAN is the smallest allowed view span
 // NOW = present as a fractional calendar year, so calendar dates map to years-ago exactly
@@ -34,7 +39,6 @@ const E=(n,t,txt,era,date,end)=>({n,t,txt,era,date,end,rank:CORE.includes(n)?1:2
 const ev=[
 // Cosmos
 E("Big Bang",13.8e9,"The universe begins expanding from an extremely hot, dense state.","Cosmos"),
-E("CMB released",13.8e9-3.8e5,"The universe cools enough for atoms to form, and light from this moment still fills the sky as the cosmic microwave background.","Cosmos","380,000 years after the Big Bang"),
 E("First stars",13.6e9,"The first stars ignite, lighting up the young universe.","Cosmos"),
 E("Milky Way forms",13.6e9,"The oldest parts of our galaxy begin assembling from gas and early stars.","Cosmos"),
 E("First supernovae",13.5e9,"The first stars explode as supernovae, seeding the cosmos with carbon, oxygen, and other heavy elements.","Cosmos","c. 13.5 billion years ago"),
@@ -311,7 +315,12 @@ c.onclick=e=>{const r=c.getBoundingClientRect(),ox=e.clientX-r.left,oy=e.clientY
  if(hit&&hit.type==="band"){setFocus(hit.name,true);return}
  closePanel(); // blank click closes the side panel only; it does not exit focus
 };
-function open(i){sel=i;const e=ev[i];pd.textContent=fmtLong(e);pt.textContent=e.n;pp.textContent=e.txt;panel.classList.add('open');draw()}
+const VIDEOS={"Big Bang":"videos/big-bang","First stars":"videos/first-stars"};
+const pw=document.getElementById('pw'),vm=document.getElementById('vm'),vv=document.getElementById('vv');
+function closeVideo(){vv.pause();vm.classList.remove('open')}
+pw.onclick=()=>{const v=sel>=0&&VIDEOS[ev[sel].n];if(!v)return;vv.innerHTML='<source src="'+v+'.mp4" type="video/mp4"><track kind="captions" srclang="en" label="English" src="'+v+'.vtt" default>';vv.load();vm.classList.add('open');vv.play().catch(()=>{})};
+document.getElementById('vx').onclick=closeVideo;vm.onclick=e=>{if(e.target===vm)closeVideo()};addEventListener('keydown',e=>{if(e.key==='Escape'&&vm.classList.contains('open'))closeVideo()});
+function open(i){sel=i;const e=ev[i];pd.textContent=fmtLong(e);pt.textContent=e.n;pp.textContent=e.txt;const has=!!VIDEOS[e.n];pw.textContent=has?'▶ Watch the episode':'Episode coming soon';pw.classList.toggle('soon',!has);panel.classList.add('open');draw()}
 document.getElementById('px').onclick=()=>closePanel();
 document.getElementById('crumb').addEventListener('click',e=>{if(e.target.closest('.showall'))reset()});
 rs.onclick=reset;
