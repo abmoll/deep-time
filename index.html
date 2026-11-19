@@ -217,9 +217,9 @@ function draw(){if(!W)return;x.clearRect(0,0,W,H);
   const nestSliver=!!(SLIVER_MIN[eraFocus]&&SLIVER_MIN[eraFocus][e[0]]);
   const atRight=vis&&(W-b)<8,tooNarrow=trueW<chipW||(vis&&(b-a)<chipW),sliverMode=SLIVER_ERAS.has(e[0])&&rawB>0&&rawA<W&&((tooNarrow&&(trueW<chipW||atRight))||nestSliver);
   if(sliverMode){
-    const sw=Math.max(sliverMin,vis?b-a:Math.max(0,trueW));
+    let sw=Math.max(sliverMin,vis?b-a:Math.max(0,trueW));
     let sx=Math.max(0,Math.min(W-sw-1,vis?b-sw:rawB-sw));
-    if(eraFocus==="Early Civilizations"&&e[0]==="Modern")sx=W-sw-1;
+    if(eraFocus==="Early Civilizations"&&e[0]==="Modern"){sx=Math.max(0,Math.round(rawA));sw=Math.max(sliverMin,W-1-sx)}
     x.save();
     x.shadowColor=e[2];x.shadowBlur=16;
     x.fillStyle=e[2];x.fillRect(sx,y,sw,chipH);
