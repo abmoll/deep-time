@@ -211,7 +211,9 @@ function draw(){if(!W)return;x.clearRect(0,0,W,H);
   if(eraStart<=R||eraEnd>=L)return; // skip eras that do not overlap the visible time range
   const rawA=px(eraStart),rawB=px(eraEnd),y=axY-24-i*bandStep,on=!eraFocus||eraFocus===e[0];
   const a=Math.max(0,rawA),b=Math.min(W,rawB),vis=rawB>0&&rawA<W&&b>a;
-  x.font="bold 13px system-ui";x.textAlign="left";const tw=x.measureText(e[0]).width,chipW=tw+16;
+  x.font="bold 13px system-ui";x.textAlign="left";let tw=x.measureText(e[0]).width,chipW=tw+16;
+  // an era cut off at the left edge (e.g. Early Civilizations in the Modern view): shrink its label so the chip ends exactly where the era ends
+  if(eraFocus&&eraFocus!==e[0]&&rawA<0&&rawB>0&&rawB<chipW&&!SLIVER_MIN[eraFocus]?.[e[0]]){const fs=Math.max(8,Math.floor(13*(rawB-16)/tw));x.font=`bold ${fs}px system-ui`;tw=x.measureText(e[0]).width;chipW=tw+16}
   const trueW=rawB-rawA;
   const sliverMin=(SLIVER_MIN[eraFocus]&&SLIVER_MIN[eraFocus][e[0]])||3;
   const nestSliver=!!(SLIVER_MIN[eraFocus]&&SLIVER_MIN[eraFocus][e[0]]);
@@ -233,6 +235,7 @@ function draw(){if(!W)return;x.clearRect(0,0,W,H);
   }
   let lx;
   if(vis&&b-a>=chipW)lx=Math.min(Math.max(a+8,4),W-tw-8);
+  else if(vis&&rawA<0&&b<=chipW+1)lx=Math.max(0,b-chipW)+8;
   else lx=Math.max(4,Math.min(W-chipW-4, vis?Math.max(a,b-chipW):W-chipW-4));
   if(vis){const g=x.createLinearGradient(a,0,b,0);g.addColorStop(0,e[2]+(on?"cc":"40"));g.addColorStop(1,e[2]+(on?"55":"18"));x.fillStyle=g;x.beginPath();x.roundRect(a,y,b-a,chipH,6);x.fill()}
   if(!vis||b-a<chipW){x.fillStyle=e[2]+(on?"dd":"55");x.beginPath();x.roundRect(lx-8,y,chipW,chipH,6);x.fill()}
