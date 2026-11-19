@@ -28,7 +28,7 @@ const MAX=13.8e9, MAXSPAN=MAX*1.04, MIN_SPAN=1; // all times are "years ago" (fl
 const NOW=(()=>{const d=new Date(),y=d.getFullYear(),a=new Date(y,0,1);return y+(d-a)/(new Date(y+1,0,1)-a)})();
 const cal=(y,m=1,d=1)=>y+(Date.UTC(y,m-1,d)-Date.UTC(y,0,1))/(Date.UTC(y+1,0,1)-Date.UTC(y,0,1)); // fractional CE year
 const ago=y=>NOW-y, bce=n=>1-n; // astronomical year of n BCE
-const eras=[["Cosmos",13.8e9,"#5b6cff"],["Earth",4.54e9,"#2fa3a8"],["Life",3.8e9,"#4cc46a"],["Hominid Era",3.9e6,"#ffb347"],["Early Civilizations",ago(bce(3500)),"#9acd32",ago(1500)],["Modern",ago(1500),"#e06bc8"]];
+const eras=[["Cosmos",13.8e9,"#5b6cff"],["Earth",4.54e9,"#2fa3a8"],["Life",3.8e9,"#4cc46a"],["Hominid Era",3.9e6,"#ffb347"],["Early Civilizations",11500,"#9acd32",ago(1500)],["Modern",ago(1500),"#e06bc8"]];
 const CORE="Big Bang|First stars|Milky Way forms|Sun forms|Earth forms|First life|Great Oxygenation|Cambrian explosion|First dinosaurs|Dinosaur extinction|Australopithecus afarensis|Lucy|Homo erectus|First out of Africa|Controlled fire|Homo sapiens|Göbekli Tepe|First farming|Çatalhöyük|Uruk|Cuneiform writing|Great Pyramid of Giza|Roman Empire|Printing press|Industrial Revolution|Moon landing".split("|");
 const E=(n,t,txt,era,date,end)=>({n,t,txt,era,date,end,rank:CORE.includes(n)?1:2}); // rank 1 = headline events, placed first when crowded
 const ev=[
@@ -91,14 +91,14 @@ E("Cave art",45e3,"People begin painting animals and signs on cave walls in Euro
 E("Lascaux",17e3,"Artists paint the famous halls of bulls and horses at Lascaux in what is now France.","Hominid Era","c. 17,000 years ago"),
 E("First Humans in the Americas",16e3,"The first humans reach the Americas and spread throughout the continents.","Hominid Era","c. 16,000 years ago"),
 E("Dogs domesticated",15e3,"Wolves are domesticated, becoming the first animals to live alongside humans.","Hominid Era","c. 15,000 years ago"),
-E("End of the Ice Age",11700,"The Pleistocene glaciations end and the Holocene, our current warm epoch, begins.","Hominid Era","c. 11,700 years ago"),
-E("Göbekli Tepe",11600,"Hunter-gatherers raise monumental carved-stone pillars at Göbekli Tepe in Anatolia, before farming takes hold.","Hominid Era","c. 11,600 years ago"),
-E("First farming",11500,"People in the Fertile Crescent begin cultivating wheat and barley, the start of agriculture.","Hominid Era","c. 11,500 years ago"),
-E("Goats and sheep domesticated",10500,"Goats and sheep are domesticated in the Near East, among the first livestock animals.","Hominid Era","c. 10,500 years ago"),
-E("Jericho's walls",1e4,"A stone wall and tower are built at Jericho, among the first permanent towns.","Hominid Era","c. 10,000 years ago (~8000 BCE)"),
-E("Rice farming",9500,"Rice is cultivated in China's Yangtze valley, beginning a major East Asian farming tradition.","Hominid Era","c. 9,500 years ago"),
-E("Maize domesticated",9000,"Maize is domesticated in Mexico, later becoming a staple across the Americas.","Hominid Era","c. 9,000 years ago"),
-E("Horses and the plow",6000,"Horses are domesticated on the steppe, and the plow comes into use, transforming farming and transport.","Hominid Era","c. 6,000 years ago (~4000 BCE)"),
+E("End of the Ice Age",11700,"The Pleistocene glaciations end and the Holocene, our current warm epoch, begins.","Early Civilizations","c. 11,700 years ago"),
+E("Göbekli Tepe",11600,"Hunter-gatherers raise monumental carved-stone pillars at Göbekli Tepe in Anatolia, before farming takes hold.","Early Civilizations","c. 11,600 years ago"),
+E("First farming",11500,"People in the Fertile Crescent begin cultivating wheat and barley, the start of agriculture.","Early Civilizations","c. 11,500 years ago"),
+E("Goats and sheep domesticated",10500,"Goats and sheep are domesticated in the Near East, among the first livestock animals.","Early Civilizations","c. 10,500 years ago"),
+E("Jericho's walls",1e4,"A stone wall and tower are built at Jericho, among the first permanent towns.","Early Civilizations","c. 10,000 years ago (~8000 BCE)"),
+E("Rice farming",9500,"Rice is cultivated in China's Yangtze valley, beginning a major East Asian farming tradition.","Early Civilizations","c. 9,500 years ago"),
+E("Maize domesticated",9000,"Maize is domesticated in Mexico, later becoming a staple across the Americas.","Early Civilizations","c. 9,000 years ago"),
+E("Horses and the plow",6000,"Horses are domesticated on the steppe, and the plow comes into use, transforming farming and transport.","Early Civilizations","c. 6,000 years ago (~4000 BCE)"),
 E("Uruk",ago(bce(3500)),"Uruk in Mesopotamia grows into the first true city, a center of temples, trade, and administration.","Early Civilizations","c. 3500 BCE"),
 E("Cuneiform writing",ago(bce(3200)),"Cuneiform writing emerges in Mesopotamia, the earliest known script.","Early Civilizations","c. 3200 BCE"),
 E("Egypt unified",ago(bce(3100)),"Upper and Lower Egypt are unified under a single king, beginning the pharaonic state.","Early Civilizations","c. 3100 BCE"),
@@ -290,8 +290,8 @@ function eraWindow(hi,lo){const pad=Math.max(hi-lo,1)*0.08;let nL=hi+pad,nR=lo-p
 function eraFit(name){
  // Hominid Era opens on a fixed ~4 Mya → now window (not a fit of all its events), with left padding so Australopithecus stays visible
  if(name==="Hominid Era")return eraWindow(4e6,0);
- // Early Civilizations: Uruk (~3500 BCE) through 1500 CE, where Modern begins
- if(name==="Early Civilizations")return eraWindow(ago(bce(3700)),ago(1500));
+ // Early Civilizations: first farming (~11,500 years ago) through 1500 CE, where Modern begins
+ if(name==="Early Civilizations")return eraWindow(12000,ago(1500));
  // Modern Era opens on a fixed 1500 CE → now window, with small padding
  if(name==="Modern")return eraWindow(ago(1500),0);
  const es=ev.filter(e=>e.era===name),hi=Math.max(...es.map(e=>e.t)),lo=Math.min(...es.map(e=>e.end!=null?e.end:e.t)),pad=(hi-lo)*0.08;
