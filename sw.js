@@ -1,4 +1,4 @@
-const CACHE = "deep-time-v1";
+const CACHE = "deep-time-v2";
 const PRECACHE = [
   "./",
   "./index.html",
