@@ -220,7 +220,7 @@ function chooseTicks(){const span=L-R,mid=(L+R)/2;calMode=L<25000||(span<=2000&&
  for(;i<steps.length;i++){const tk=ticksFor(steps[i],calMode),mw=Math.max(0,...tk.map(t=>x.measureText(t.s).width));
   if(steps[i]/span*W>=mw+18||i==steps.length-1)return tk}}
 const stars=[...Array(220)].map(()=>[Math.random(),Math.random(),Math.random()]);
-let hits=[],sel=-1;
+let hits=[],labelHits=[],sel=-1;
 function draw(){if(!W)return;x.clearRect(0,0,W,H);
  stars.forEach(s=>{x.fillStyle=`rgba(255,255,255,${s[2]*.6})`;x.fillRect(s[0]*W,s[1]*H,s[2]*1.6,s[2]*1.6)});
  const axY=H-50;x.strokeStyle="#3d4590";x.beginPath();x.moveTo(0,axY);x.lineTo(W,axY);x.stroke();
@@ -270,19 +270,19 @@ function draw(){if(!W)return;x.clearRect(0,0,W,H);
  });
  // events: greedy lane packing by real label width, so hidden markers reappear as the view spreads them out
  // in focus mode, only that era's events are shown (all of them); overview uses the full set
- hits=[];hidden=0;x.textAlign="center";x.font="13px system-ui";
+ hits=[];labelHits=[];hidden=0;x.textAlign="center";x.font="13px system-ui";
  const bandTop=axY-24-(eras.length-1)*bandStep,laneStart=66,laneGap=eraFocus?27:44;
  const nLanes=Math.max(5,Math.min(12,Math.floor((bandTop-laneStart-16)/laneGap)+1));
  const lane=[...Array(nLanes)].map(()=>[]),placed=[];
  const vis=[];ev.forEach((e,i)=>{if(eraFocus&&e.era!==eraFocus)return;const p=px(e.t),q=e.end!=null?px(e.end):p,w=x.measureText(e.n).width,mid=Math.min(W-w/2-4,Math.max(w/2+4,(p+q)/2));
-  if(q<-20||p>W+20)return;vis.push({e,i,p,q,mid,a:Math.min(p,mid-w/2),b:Math.max(q,mid+w/2)})});
+  if(q<-20||p>W+20)return;vis.push({e,i,p,q,mid,w,a:Math.min(p,mid-w/2),b:Math.max(q,mid+w/2)})});
  vis.sort((u,v)=>u.e.rank-v.e.rank||u.i-v.i).forEach(o=>{const k=lane.findIndex(l=>l.every(([a,b])=>o.b+10<a||o.a>b+10));
   // overview: minor events appear only once the view creates ~100px of space from any already-placed marker, so the full 13.8 Bya view stays a clean set of majors
   if(k<0||(!eraFocus&&o.e.rank>1&&placed.some(q=>Math.abs(q-o.p)<100))){hidden++;return}lane[k].push([o.a,o.b]);placed.push(o.p);
-  const y=laneStart+k*laneGap,{e,i,p,q,mid}=o;x.strokeStyle="rgba(255,200,140,.4)";x.beginPath();x.moveTo(p,y+8);x.lineTo(p,axY);x.stroke();
+  const y=laneStart+k*laneGap,{e,i,p,q,mid,w}=o;x.strokeStyle="rgba(255,200,140,.4)";x.beginPath();x.moveTo(p,y+8);x.lineTo(p,axY);x.stroke();
   if(q!==p){x.fillStyle="rgba(255,184,107,.35)";x.fillRect(p,y-3,q-p,6);x.beginPath();x.moveTo(q,y+4);x.lineTo(q,axY);x.stroke()}
   x.fillStyle=sel===i?"#ff5f7a":"#ffcf8a";x.shadowColor="#ffb86b";x.shadowBlur=14;x.beginPath();x.arc(p,y,7,0,7);x.fill();x.shadowBlur=0;
-  x.fillStyle="#fff";x.fillText(e.n,mid,y-14);hits.push([p,y,i])});
+  x.fillStyle="#fff";x.fillText(e.n,mid,y-14);hits.push([p,y,i]);labelHits.push({a:mid-w/2-5,b:mid+w/2+5,y1:y-27,y2:y-9,i})});
  if(hidden){x.textAlign="left";x.font="11px system-ui";x.fillStyle="#7f88b8";x.fillText(`+${hidden} more event${hidden>1?"s":""}`+(eraFocus?"":" — click an era to see more"),10,H-10)}
  if(slivers.length){
   slivers.sort((a,b)=>a.y-b.y);
@@ -330,7 +330,7 @@ function setFocus(name,animate=true){eraFocus=name;const[nL,nR]=eraFit(name);if(
 function closePanel(){if(sel<0&&!panel.classList.contains('open'))return;sel=-1;panel.classList.remove('open');draw()}
 function exitFocus(animate=true){eraFocus=null;sel=-1;panel.classList.remove('open');if(animate)animateTo(MAX*1.02,-MAX*0.02);else{cancelAnim();fullView();draw()}}
 function reset(){exitFocus(true)}
-function hitAt(ox,oy){const h=hits.find(h=>Math.hypot(h[0]-ox,h[1]-oy)<14);if(h)return{type:"ev",i:h[2]};const b=bandHits.find(b=>ox>=b.a&&ox<=b.b&&oy>=b.y&&oy<=b.y+b.h);if(b)return{type:"band",name:b.name}}
+function hitAt(ox,oy){const h=hits.find(h=>Math.hypot(h[0]-ox,h[1]-oy)<14);if(h)return{type:"ev",i:h[2]};const l=labelHits.find(l=>ox>=l.a&&ox<=l.b&&oy>=l.y1&&oy<=l.y2);if(l)return{type:"ev",i:l.i};const b=bandHits.find(b=>ox>=b.a&&ox<=b.b&&oy>=b.y&&oy<=b.y+b.h);if(b)return{type:"band",name:b.name}}
 c.onpointermove=e=>{
  const r=c.getBoundingClientRect(),ox=e.clientX-r.left,oy=e.clientY-r.top;
  c.style.cursor=hitAt(ox,oy)?"pointer":"default";
@@ -358,6 +358,6 @@ if(q.has('center')||q.has('year')||q.has('span')){const s=Math.min(MAXSPAN,Math.
 // ?focus=humanity is kept as an alias for Hominid Era; ?focus=farming|agrarian|civilizations map to Agrarian Civilizations
 if(q.has('focus')){const s=String(q.get('focus')||"").toLowerCase().replace(/\s+/g,""),alias={humanity:"Hominid Era",hominid:"Hominid Era",farming:"Early Civilizations",agrarian:"Early Civilizations",civilizations:"Early Civilizations",early:"Early Civilizations",modern:"Modern"},n=alias[s]?eras.find(e=>e[0]===alias[s]):eras.find(e=>{const k=e[0].toLowerCase();return k.replace(/\s+/g,"")===s||k.startsWith(s)});if(n)setFocus(n[0],false)}
 window.DT={get focus(){return eraFocus},get L(){return L},get R(){return R},get sel(){return sel},get hidden(){return hidden},get W(){return W},get H(){return H},
- visible(){return hits.map(h=>ev[h[2]].n)},panelOpen(){return panel.classList.contains('open')},get bandHits(){return bandHits},get hits(){return hits},setFocus,reset,exitFocus,closePanel,draw,eraFit,ev,eras};
+ visible(){return hits.map(h=>ev[h[2]].n)},panelOpen(){return panel.classList.contains('open')},get bandHits(){return bandHits},get hits(){return hits},get labelHits(){return labelHits},setFocus,reset,exitFocus,closePanel,draw,eraFit,ev,eras};
 addEventListener('load',()=>{if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js')});
 </script></body></html>
