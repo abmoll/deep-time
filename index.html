@@ -264,7 +264,7 @@ function draw(){if(!W)return;x.clearRect(0,0,W,H);
  // events: greedy lane packing by real label width, so hidden markers reappear as the view spreads them out
  // in focus mode, only that era's events are shown (all of them); overview uses the full set
  hits=[];labelHits=[];hidden=0;x.textAlign="center";x.font="13px system-ui";
- const bandTop=axY-24-(eras.length-1)*bandStep,laneStart=66,laneGap=eraFocus?27:44;
+ const bandTop=axY-24-(eras.length-1)*bandStep,laneStart=66,laneGap=eraFocus?(ev.filter(e=>e.era===eraFocus).length<=12?42:27):44; // small eras (Cosmos, Earth) get roomier lanes so every label and dot stays readable
  const nLanes=Math.max(5,Math.min(12,Math.floor((bandTop-laneStart-16)/laneGap)+1));
  const lane=[...Array(nLanes)].map(()=>[]),placed=[];
  const vis=[];ev.forEach((e,i)=>{if(eraFocus&&e.era!==eraFocus)return;const p=px(e.t),q=e.end!=null?px(e.end):p,w=x.measureText(e.n).width,mid=Math.min(W-w/2-4,Math.max(w/2+4,(p+q)/2));
