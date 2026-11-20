@@ -10,8 +10,10 @@
 <style>
 html{background:#07080f}
 body{margin:0;background:radial-gradient(ellipse at 30% 20%,#1a1f3d 0%,#07080f 60%,#000 100%);color:#e8e6f0;font-family:Georgia,serif;overflow:hidden;height:100vh;height:100dvh;box-sizing:border-box;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px);display:flex;flex-direction:column}
-header{display:flex;align-items:center;gap:14px;flex-shrink:0;padding:8px 20px 6px}
+header{display:flex;align-items:center;gap:16px;flex-shrink:0;padding:8px 20px 6px}
 h1{margin:0;flex-shrink:0;font-size:24px;letter-spacing:3px;font-weight:400;line-height:1.15;white-space:nowrap;background:linear-gradient(90deg,#fff,#9fb4ff,#ffb86b);-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand{display:flex;align-items:baseline;gap:10px;flex-shrink:0;min-width:0;margin-right:4px}
+.tag{color:#9aa0c0;font-style:italic;font-size:13px;line-height:1.2;white-space:nowrap;font-weight:400}
 #crumb{padding:0;flex:1;min-width:0;font-family:system-ui;font-size:12px;color:#b9c3ff;letter-spacing:.2px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #crumb span{color:#fff;font-weight:600}#crumb b{color:#ffcf8a;font-weight:600}#crumb .r{color:#7f88b8}
 #crumb .showall{color:#ffcf8a;font-weight:500;cursor:pointer;margin-left:8px;font-size:12px;letter-spacing:0;border-bottom:1px solid rgba(255,207,138,.45)}
@@ -21,9 +23,11 @@ canvas{width:100%;height:100%;cursor:default;display:block}
 #ctl{position:static;display:flex;gap:6px;flex-shrink:0;margin-left:auto}
 #ctl button{background:#1c2148;color:#fff;border:1px solid #3d4590;border-radius:6px;padding:5px 10px;font-size:13px;line-height:1.2;cursor:pointer}
 @media(max-width:600px){
-header{flex-wrap:wrap;align-items:center;gap:4px 10px;padding:6px 12px 4px}
-h1{font-size:19px;letter-spacing:2px;order:1}
-#ctl{margin-left:auto;order:2}
+header{flex-wrap:wrap;align-items:center;gap:4px 8px;padding:6px 12px 4px}
+.brand{order:1;flex:1;min-width:0;gap:7px;margin-right:0}
+h1{font-size:19px;letter-spacing:2px}
+.tag{font-size:11px}
+#ctl{margin-left:auto;order:2;flex-shrink:0}
 #crumb{flex:1 1 100%;order:3;font-size:12px}
 #wrap{margin:0 10px 8px;border-radius:10px}
 }
@@ -43,7 +47,7 @@ h1{font-size:19px;letter-spacing:2px;order:1}
 #ps p{margin:0;line-height:1.65;color:#c9cbe0;font-size:14px}
 #panel .w{flex-shrink:0}
 </style></head><body>
-<header><h1>DEEP TIME</h1><div id="crumb"></div><div id="ctl"><button id="rs" title="All Time" aria-label="All Time">All Time</button></div></header>
+<header><div class="brand"><h1>DEEP TIME</h1><div class="tag">13.8 billion years of history</div></div><div id="crumb"></div><div id="ctl"><button id="rs" title="All Time" aria-label="All Time">All Time</button></div></header>
 <div id="wrap"><canvas id="c"></canvas></div>
 <div id="panel"><button class="x" id="px">×</button><div id="pc"><div class="d" id="pd"></div><h2 id="pt"></h2><p id="pp"></p><div id="ps"><section><h3>What made it possible</h3><p id="p-possible"></p></section><section><h3>Before</h3><p id="p-before"></p></section><section><h3>After</h3><p id="p-after"></p></section></div><button class="w" id="pw">▶ Watch the episode</button></div></div>
 <div id="vm"><button class="x" id="vx">×</button><video id="vv" controls playsinline preload="none"></video></div>
