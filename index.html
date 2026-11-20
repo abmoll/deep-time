@@ -227,8 +227,9 @@ function draw(){if(!W)return;x.clearRect(0,0,W,H);
  const bandStep=24,chipH=22;
  eras.forEach((e,i)=>{
   const eraStart=e[1],eraEnd=e[3]!=null?e[3]:0;
-  if(eraStart<=R||eraEnd>=L)return; // skip eras that do not overlap the visible time range
+  const offR=eraStart<=R,offL=eraEnd>=L; // era lies entirely right (newer) or left (older) of the view: keep it as a pinned chip so every era stays reachable
   const rawA=px(eraStart),rawB=px(eraEnd),y=axY-24-i*bandStep,on=!eraFocus||eraFocus===e[0];
+  if(offR||offL){x.font="bold 13px system-ui";x.textAlign="left";const lab=offR?e[0]+" \u203A":"\u2039 "+e[0],tw2=x.measureText(lab).width,cw=tw2+16,cx=offR?W-cw-4:4;x.fillStyle=e[2]+"66";x.beginPath();x.roundRect(cx,y,cw,chipH,6);x.fill();x.fillStyle="rgba(255,255,255,.8)";x.fillText(lab,cx+8,y+15);bandHits.push({a:cx,b:cx+cw,y,h:chipH,name:e[0]});return}
   const a=Math.max(0,rawA),b=Math.min(W,rawB),vis=rawB>0&&rawA<W&&b>a;
   x.font="bold 13px system-ui";x.textAlign="left";const tw=x.measureText(e[0]).width,chipW=tw+16;
   const trueW=rawB-rawA;
