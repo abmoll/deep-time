@@ -324,7 +324,7 @@ function setFocus(name,animate=true){eraFocus=name;const[nL,nR]=eraFit(name);if(
 function closePanel(){if(sel<0&&!panel.classList.contains('open'))return;sel=-1;panel.classList.remove('open');draw()}
 function exitFocus(animate=true){eraFocus=null;sel=-1;panel.classList.remove('open');if(animate)animateTo(MAX*1.02,-MAX*0.02);else{cancelAnim();fullView();draw()}}
 function reset(){exitFocus(true)}
-function hitAt(ox,oy){const h=hits.find(h=>Math.hypot(h[0]-ox,h[1]-oy)<14);if(h)return{type:"ev",i:h[2]};const l=labelHits.find(l=>ox>=l.a&&ox<=l.b&&oy>=l.y1&&oy<=l.y2);if(l)return{type:"ev",i:l.i};const b=bandHits.find(b=>ox>=b.a&&ox<=b.b&&oy>=b.y&&oy<=b.y+b.h);if(b)return{type:"band",name:b.name}}
+function hitAt(ox,oy){const d=h=>Math.hypot(h[0]-ox,h[1]-oy),near=hits.filter(h=>d(h)<14).sort((u,v)=>d(u)-d(v));if(near.length&&d(near[0])<8)return{type:"ev",i:near[0][2]};const l=labelHits.find(l=>ox>=l.a&&ox<=l.b&&oy>=l.y1&&oy<=l.y2);if(l)return{type:"ev",i:l.i};const h=near[0];if(h)return{type:"ev",i:h[2]};const b=bandHits.find(b=>ox>=b.a&&ox<=b.b&&oy>=b.y&&oy<=b.y+b.h);if(b)return{type:"band",name:b.name}}
 c.onpointermove=e=>{
  const r=c.getBoundingClientRect(),ox=e.clientX-r.left,oy=e.clientY-r.top;
  c.style.cursor=hitAt(ox,oy)?"pointer":"default";
