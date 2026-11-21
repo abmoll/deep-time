@@ -349,6 +349,15 @@
           border-radius: 0;
         }
       }
+          #ctl {
+        display: flex;
+        gap: 6px;
+      }
+      @media (max-width: 600px) {
+        .tag {
+          display: none;
+        }
+      }
     </style>
   </head>
   <body>
@@ -358,7 +367,7 @@
         <div class="tag">13.8 billion years of history</div>
       </div>
       <div id="crumb"></div>
-      <div id="ctl"><button id="rs" title="Refresh" aria-label="Refresh">&#x21bb; Refresh</button></div>
+      <div id="ctl"><button id="wa" title="Watch all videos" aria-label="Watch all videos">&#x25B6; Watch All</button><button id="rs" title="Refresh" aria-label="Refresh">&#x21bb; Refresh</button></div>
     </header>
     <div id="wrap">
       <canvas id="c"></canvas><button id="erasbtn" type="button" aria-expanded="false">Eras ▾</button>
@@ -414,7 +423,7 @@
         ["Modern", ago(1500), "#e06bc8"],
       ];
       const CORE =
-        "Big Bang|First stars|Milky Way forms|Sun forms|Earth forms|First life|Great Oxygenation|Cambrian explosion|First dinosaurs|Dinosaur extinction|Australopithecus afarensis|Lucy|Homo erectus|First out of Africa|Controlled fire|Homo sapiens|Göbekli Tepe|First farming|Çatalhöyük|Uruk|Cuneiform writing|Great Pyramid of Giza|Roman Empire|Printing press|Industrial Revolution|Moon landing".split(
+        "Big Bang|First stars|Milky Way forms|Sun forms|Earth forms|The Moon forms|First life|Great Oxygenation|Cambrian explosion|First dinosaurs|Dinosaur extinction|Australopithecus afarensis|Lucy|Homo erectus|First out of Africa|Controlled fire|Homo sapiens|Göbekli Tepe|First farming|Çatalhöyük|Uruk|Cuneiform writing|Great Pyramid of Giza|Roman Empire|Printing press|Industrial Revolution|Moon landing".split(
           "|",
         );
       const E = (n, t, txt, era, date, end) => ({ n, t, txt, era, date, end, rank: CORE.includes(n) ? 1 : 2 }); // rank 1 = headline events, placed first when crowded
@@ -2620,9 +2629,7 @@
         vv.pause();
         vm.classList.remove("open");
       }
-      pw.onclick = () => {
-        const v = sel >= 0 && VIDEOS[ev[sel].n];
-        if (!v) return;
+      function playVideo(v) {
         vv.innerHTML =
           '<source src="' +
           v +
@@ -2633,7 +2640,13 @@
         setCC();
         vm.classList.add("open");
         vv.play().catch(() => {});
+      }
+      pw.onclick = () => {
+        const v = sel >= 0 && VIDEOS[ev[sel].n];
+        if (v) playVideo(v);
       };
+      // Watch All: every event video stitched into one film (individual videos stay in VIDEOS)
+      document.getElementById("wa").onclick = () => playVideo("videos/watch-all");
       let ccOn = localStorage.getItem("dtcc") === "1";
       function setCC() {
         const t = vv.textTracks;
