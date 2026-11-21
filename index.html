@@ -2381,13 +2381,7 @@
             x.lineTo(q, axY);
             x.stroke();
           }
-          x.fillStyle = sel === i ? "#ff5f7a" : "#ffcf8a";
-          x.shadowColor = "#ffb86b";
-          x.shadowBlur = 14;
-          x.beginPath();
-          x.arc(p, y, 7, 0, 7);
-          x.fill();
-          x.shadowBlur = 0;
+          drawDot(e, i, p, y);
           x.fillStyle = "#fff";
           x.fillText(e.n, mid, y - 14);
           hits.push([p, y, i]);
@@ -2622,6 +2616,28 @@
         "The Moon forms": "videos/moon-forms",
         "First life": "videos/first-life",
       };
+      // dots: circle = event, diamond = invention; same size; filled with the era's color
+      const INV = new Set(
+        "First stone tools|Acheulean hand axes|Controlled fire|Shell beads|First farming|Maize domesticated|Horses and the plow|Cuneiform writing|First pottery|The wheel|Iron Age|Printing press|Newton's Principia|Industrial Revolution|First powered flight|Sputnik 1|Moon landing|World Wide Web|Galileo's telescope|Smallpox vaccine|Origin of Species|Theory of relativity|Penicillin|DNA double helix|Human Genome Project|Watt's steam engine|Telegraph|ChatGPT|Cave art|Dogs domesticated".split("|"),
+      );
+      function drawDot(e, i, p, y) {
+        const eraCol = (eras.find((r) => r[0] === e.era) || [0, 0, "#ffcf8a"])[2],
+          r = 7;
+        x.fillStyle = sel === i ? "#ff5f7a" : eraCol;
+        x.shadowColor = eraCol;
+        x.shadowBlur = 14;
+        x.beginPath();
+        if (INV.has(e.n)) {
+          const d = r * 1.25;
+          x.moveTo(p, y - d);
+          x.lineTo(p + d, y);
+          x.lineTo(p, y + d);
+          x.lineTo(p - d, y);
+          x.closePath();
+        } else x.arc(p, y, r, 0, 7);
+        x.fill();
+        x.shadowBlur = 0;
+      }
       const pw = document.getElementById("pw"),
         vm = document.getElementById("vm"),
         vv = document.getElementById("vv");
@@ -2720,6 +2736,20 @@
       });
       addEventListener("resize", placeEras);
       placeEras();
+      // iPhone home-screen app resumes where it was left: come back to the All Time view after time away
+      let hiddenAt = 0;
+      const backToAll = () => {
+        if (vm.classList.contains("open")) return;
+        if (landMQ.matches) setEras(false);
+        exitFocus(false);
+      };
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) hiddenAt = Date.now();
+        else if (hiddenAt && Date.now() - hiddenAt > 60000) backToAll();
+      });
+      addEventListener("pageshow", (e) => {
+        if (e.persisted) backToAll();
+      });
       const q = new URLSearchParams(location.search);
       if (/demo=1/.test(location.search + location.hash)) {
         L = 7e8;
