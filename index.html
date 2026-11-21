@@ -48,7 +48,7 @@ h1{font-size:19px;letter-spacing:2px}
 #ps h3{margin:0 0 6px;font-family:system-ui;font-size:11px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;color:#ffb86b}
 #ps p{margin:0;line-height:1.65;color:#c9cbe0;font-size:14px}
 #panel .w{flex-shrink:0}
-</style></head><body>
+#rotlock{display:none}@media (orientation:landscape) and (max-height:500px) and (pointer:coarse){#rotlock{display:flex;position:fixed;inset:0;z-index:99999;background:#07080f;color:#fff;flex-direction:column;align-items:center;justify-content:center;gap:14px;font:600 17px system-ui;text-align:center;padding:20px}#rotlock .ph{width:34px;height:58px;border:3px solid #ffcf8a;border-radius:8px;animation:rl 1.6s ease-in-out infinite}@keyframes rl{0%,30%{transform:rotate(90deg)}60%,100%{transform:rotate(0)}}body{overflow:hidden}}</style></head><body><div id="rotlock" aria-live="polite"><div class="ph"></div><div>Rotate your phone to portrait</div><div style="font:400 13px system-ui;color:#9aa3cf">Deep Time is designed for portrait view</div></div>
 <header><div class="brand"><h1>DEEP TIME</h1><div class="tag">13.8 billion years of history</div></div><div id="crumb"></div><div id="ctl"><button id="rs" title="Refresh" aria-label="Refresh">&#x21bb; Refresh</button></div></header>
 <div id="wrap"><canvas id="c"></canvas></div>
 <div id="panel"><button class="x" id="px">×</button><div id="pc"><div class="d" id="pd"></div><h2 id="pt"></h2><p id="pp"></p><div id="ps"><section><h3>What made it possible</h3><p id="p-possible"></p></section><section><h3>Before</h3><p id="p-before"></p></section><section><h3>After</h3><p id="p-after"></p></section></div><button class="w" id="pw">▶ Watch the episode</button></div></div>
