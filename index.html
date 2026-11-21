@@ -266,8 +266,8 @@ function draw(){if(!W)return;x.clearRect(0,0,W,H);
  const bandTop=axY-24-(eras.length-1)*bandStep,laneStart=66,laneGap=eraFocus?(ev.filter(e=>e.era===eraFocus).length<=12?42:27):44; // small eras (Cosmos, Earth) get roomier lanes so every label and dot stays readable
  const nLanes=Math.max(5,Math.min(20,Math.floor((bandTop-laneStart-16)/laneGap)+1));
  const lane=[...Array(nLanes)].map(()=>[]),placed=[];
- const isAll=!eraFocus&&(L-R)>=MAXSPAN*.9999,RECENT_ERAS=["Hominid Era","Early Civilizations","Modern"],ALL_RECENT=["Australopithecus afarensis","Lucy","Controlled fire","Homo sapiens","First farming","Cuneiform writing","Industrial Revolution","Moon landing"]; // full-timeline view: the recent stack shows two headline milestones per human era
- const vis=[];ev.forEach((e,i)=>{if(eraFocus&&e.era!==eraFocus)return;if(isAll&&RECENT_ERAS.includes(e.era)&&!ALL_RECENT.includes(e.n))return;const p=px(e.t),q=e.end!=null?px(e.end):p,w=x.measureText(e.n).width,mid=Math.min(W-w/2-4,Math.max(w/2+4,(p+q)/2));
+ const ALL_HIDE=["First dinosaurs","Dinosaur extinction","Australopithecus afarensis"],isAll=!eraFocus&&(L-R)>=MAXSPAN*.9999,RECENT_ERAS=["Hominid Era","Early Civilizations","Modern"],ALL_RECENT=["Australopithecus afarensis","Lucy","Controlled fire","Homo sapiens","First farming","Cuneiform writing","Industrial Revolution","Moon landing"]; // full-timeline view: the recent stack shows two headline milestones per human era
+ const vis=[];ev.forEach((e,i)=>{if(eraFocus&&e.era!==eraFocus)return;if(isAll&&RECENT_ERAS.includes(e.era)&&!ALL_RECENT.includes(e.n))return;if(isAll&&ALL_HIDE.includes(e.n))return;const p=px(e.t),q=e.end!=null?px(e.end):p,w=x.measureText(e.n).width,mid=Math.min(W-w/2-4,Math.max(w/2+4,(p+q)/2));
   if(q<-20||p>W+20)return;vis.push({e,i,p,q,mid,w,a:Math.min(p,mid-w/2),b:Math.max(q,mid+w/2)})});
  vis.sort((u,v)=>u.e.rank-v.e.rank||u.i-v.i).forEach(o=>{const k=lane.findIndex(l=>l.every(([a,b])=>o.b+10<a||o.a>b+10));
   // overview: minor events appear only once the view creates ~100px of space from any already-placed marker, so the full 13.8 Bya view stays a clean set of majors
