@@ -49,7 +49,7 @@ h1{font-size:19px;letter-spacing:2px}
 #ps p{margin:0;line-height:1.65;color:#c9cbe0;font-size:14px}
 #panel .w{flex-shrink:0}
 </style></head><body>
-<header><div class="brand"><h1>DEEP TIME</h1><div class="tag">13.8 billion years of history</div></div><div id="crumb"></div><div id="ctl"><button id="rs" title="All Time" aria-label="All Time">All Time</button></div></header>
+<header><div class="brand"><h1>DEEP TIME</h1><div class="tag">13.8 billion years of history</div></div><div id="crumb"></div><div id="ctl"><button id="rs" title="Refresh" aria-label="Refresh">&#x21bb; Refresh</button></div></header>
 <div id="wrap"><canvas id="c"></canvas></div>
 <div id="panel"><button class="x" id="px">×</button><div id="pc"><div class="d" id="pd"></div><h2 id="pt"></h2><p id="pp"></p><div id="ps"><section><h3>What made it possible</h3><p id="p-possible"></p></section><section><h3>Before</h3><p id="p-before"></p></section><section><h3>After</h3><p id="p-after"></p></section></div><button class="w" id="pw">▶ Watch the episode</button></div></div>
 <div id="vm"><button class="x" id="vx">×</button><button id="vcc" aria-pressed="false" title="Captions">CC</button><video id="vv" controls playsinline preload="none"></video></div>
@@ -341,7 +341,7 @@ document.getElementById('vx').onclick=closeVideo;vm.onclick=e=>{if(e.target===vm
 function open(i){sel=i;const e=ev[i];pd.textContent=fmtLong(e);pt.textContent=e.n;pp.textContent=e.txt;document.getElementById('p-possible').textContent=e.possible||'';document.getElementById('p-before').textContent=e.before||'';document.getElementById('p-after').textContent=e.after||'';const has=!!VIDEOS[e.n];pw.textContent=has?'▶ Watch the episode':'Episode coming soon';pw.classList.toggle('soon',!has);panel.classList.add('open');const pc=document.getElementById('pc');if(pc)pc.scrollTop=0;draw()}
 document.getElementById('px').onclick=()=>closePanel();
 document.getElementById('crumb').addEventListener('click',e=>{if(e.target.closest('.showall'))reset()});
-rs.onclick=reset;
+rs.onclick=()=>{const u=new URL(location.href);u.searchParams.set("r",Date.now());location.replace(u.toString())};
 addEventListener('resize',size);size();
 const q=new URLSearchParams(location.search);
 if(/demo=1/.test(location.search+location.hash)){L=7e8;R=-5e8;panel.style.transition="none";open(ev.findIndex(e=>e.n=="Dinosaur extinction"))}
