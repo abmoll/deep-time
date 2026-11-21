@@ -48,9 +48,9 @@ h1{font-size:19px;letter-spacing:2px}
 #ps h3{margin:0 0 6px;font-family:system-ui;font-size:11px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;color:#ffb86b}
 #ps p{margin:0;line-height:1.65;color:#c9cbe0;font-size:14px}
 #panel .w{flex-shrink:0}
-</style></head><body>
+#erasbtn{display:none;position:absolute;left:10px;z-index:20;background:#3b5bff;color:#fff;border:0;border-radius:16px;padding:6px 14px;font:600 13px system-ui;box-shadow:0 2px 10px rgba(0,0,0,.45);cursor:pointer}@media (orientation:landscape) and (max-height:500px) and (pointer:coarse){#erasbtn{display:block}}</style></head><body>
 <header><div class="brand"><h1>DEEP TIME</h1><div class="tag">13.8 billion years of history</div></div><div id="crumb"></div><div id="ctl"><button id="rs" title="Refresh" aria-label="Refresh">&#x21bb; Refresh</button></div></header>
-<div id="wrap"><canvas id="c"></canvas></div>
+<div id="wrap"><canvas id="c"></canvas><button id="erasbtn" type="button" aria-expanded="false">Eras ▾</button></div>
 <div id="panel"><button class="x" id="px">×</button><div id="pc"><div class="d" id="pd"></div><h2 id="pt"></h2><p id="pp"></p><div id="ps"><section><h3>What made it possible</h3><p id="p-possible"></p></section><section><h3>Before</h3><p id="p-before"></p></section><section><h3>After</h3><p id="p-after"></p></section></div><button class="w" id="pw">▶ Watch the episode</button></div></div>
 <div id="vm"><button class="x" id="vx">×</button><button id="vcc" aria-pressed="false" title="Captions">CC</button><video id="vv" controls playsinline preload="none"></video></div>
 <script>
@@ -177,7 +177,7 @@ const STORY={"Big Bang":{"possible":"A patch of extreme energy can inflate, then
 ev.forEach(e=>{const s=STORY[e.n];if(s)Object.assign(e,s)});
 const c=document.getElementById('c'),x=c.getContext('2d'),panel=document.getElementById('panel');
 let W,H,L,R; // view edges in years ago; L = left (older), R = right (newer)
-let eraFocus=null,anim=0,bandHits=[];
+let eraFocus=null,anim=0,bandHits=[],erasOpen=false;const landMQ=matchMedia("(orientation:landscape) and (max-height:500px) and (pointer:coarse)"),erasClosed=()=>landMQ.matches&&!erasOpen; // phone landscape: era bars fold away behind the Eras button
 function fullView(){L=MAX*1.02;R=-MAX*0.02}fullView();
 function size(){const d=devicePixelRatio;W=c.clientWidth;H=c.clientHeight;c.width=W*d;c.height=H*d;x.setTransform(d,0,0,d,0,0);draw()}
 const px=t=>(L-t)/(L-R)*W, tx=p=>L-p/W*(L-R);
@@ -222,7 +222,7 @@ function draw(){if(!W)return;x.clearRect(0,0,W,H);
  const SLIVER_ERAS=new Set(["Hominid Era","Early Civilizations","Modern"]);
  const SLIVER_MIN={ "Hominid Era":{"Early Civilizations":10,"Modern":5}, "Early Civilizations":{"Modern":8} };
  const bandStep=24,chipH=22;
- eras.forEach((e,i)=>{
+ eras.forEach((e,i)=>{if(erasClosed())return;
   const eraStart=e[1],eraEnd=e[3]!=null?e[3]:0;
   const offR=eraStart<=R,offL=eraEnd>=L; // era lies entirely right (newer) or left (older) of the view: keep it as a pinned chip so every era stays reachable
   const rawA=px(eraStart),rawB=px(eraEnd),y=axY-24-i*bandStep,on=!eraFocus||eraFocus===e[0];
@@ -262,7 +262,7 @@ function draw(){if(!W)return;x.clearRect(0,0,W,H);
  // events: greedy lane packing by real label width, so hidden markers reappear as the view spreads them out
  // in focus mode, only that era's events are shown (all of them); overview uses the full set
  hits=[];labelHits=[];hidden=0;x.textAlign="center";x.font="13px system-ui";
- const bandTop=axY-24-(eras.length-1)*bandStep,laneStart=66,laneGap=eraFocus?(ev.filter(e=>e.era===eraFocus).length<=12?42:27):44; // small eras (Cosmos, Earth) get roomier lanes so every label and dot stays readable
+ const bandTop=erasClosed()?axY-10:axY-24-(eras.length-1)*bandStep,laneStart=66,laneGap=eraFocus?(ev.filter(e=>e.era===eraFocus).length<=12?42:27):44; // small eras (Cosmos, Earth) get roomier lanes so every label and dot stays readable
  const nLanes=Math.max(5,Math.min(20,Math.floor((bandTop-laneStart-16)/laneGap)+1));
  const lane=[...Array(nLanes)].map(()=>[]),placed=[];
  const ALL_HIDE=["Dinosaur extinction","Australopithecus afarensis"],isAll=!eraFocus&&(L-R)>=MAXSPAN*.9999,RECENT_ERAS=["Hominid Era","Early Civilizations","Modern"],ALL_RECENT=["Australopithecus afarensis","Controlled fire","Homo sapiens","First farming","Cuneiform writing","Industrial Revolution","Moon landing"]; // full-timeline view: the recent stack shows two headline milestones per human era
@@ -278,7 +278,7 @@ function draw(){if(!W)return;x.clearRect(0,0,W,H);
   if(q!==p){x.fillStyle="rgba(255,184,107,.35)";x.fillRect(p,y-3,q-p,6);x.beginPath();x.moveTo(q,y+4);x.lineTo(q,axY);x.stroke()}
   x.fillStyle=sel===i?"#ff5f7a":"#ffcf8a";x.shadowColor="#ffb86b";x.shadowBlur=14;x.beginPath();x.arc(p,y,7,0,7);x.fill();x.shadowBlur=0;
   x.fillStyle="#fff";x.fillText(e.n,mid,y-14);hits.push([p,y,i]);labelHits.push({a:mid-w/2-5,b:mid+w/2+5,y1:y-27,y2:y-9,i})});
- if(hidden){x.textAlign="left";x.font="11px system-ui";x.fillStyle="#7f88b8";x.fillText(`+${hidden} more event${hidden>1?"s":""}`+(eraFocus?"":" — click an era to see more"),10,H-10)}
+ if(hidden){x.textAlign="left";x.font="11px system-ui";x.fillStyle="#7f88b8";x.fillText(`+${hidden} more event${hidden>1?"s":""}`+(eraFocus?"":" — click an era to see more"),landMQ.matches?112:10,H-10)}
  if(slivers.length){
   slivers.sort((a,b)=>a.y-b.y);
   x.font="600 13px system-ui";x.textAlign="left";
@@ -332,7 +332,7 @@ c.onpointermove=e=>{
 };
 c.onclick=e=>{const r=c.getBoundingClientRect(),ox=e.clientX-r.left,oy=e.clientY-r.top,hit=hitAt(ox,oy);
  if(hit&&hit.type==="ev"){open(hit.i);return}
- if(hit&&hit.type==="band"){setFocus(hit.name,true);return}
+ if(hit&&hit.type==="band"){if(landMQ.matches)setEras(false);setFocus(hit.name,true);return}
  closePanel(); // blank click closes the side panel only; it does not exit focus
 };
 const VIDEOS={"Big Bang":"videos/big-bang","First stars":"videos/first-stars","Earth forms":"videos/earth-forms","The Moon forms":"videos/moon-forms","First life":"videos/first-life"};
@@ -345,6 +345,9 @@ document.getElementById('px').onclick=()=>closePanel();
 document.getElementById('crumb').addEventListener('click',e=>{if(e.target.closest('.showall'))reset()});
 rs.onclick=()=>{const u=new URL(location.href);u.searchParams.set("r",Date.now());location.replace(u.toString())};
 addEventListener('resize',size);size();
+const erasBtn=document.getElementById('erasbtn');function placeEras(){if(!H)return;const axY=H-50;erasBtn.style.top=(erasOpen?axY+4:axY-36)+'px'}
+function setEras(o){erasOpen=o;erasBtn.textContent=o?'Eras ▴':'Eras ▾';erasBtn.setAttribute('aria-expanded',o);placeEras();draw()}
+erasBtn.onclick=e=>{e.stopPropagation();setEras(!erasOpen)};landMQ.addEventListener('change',()=>{erasOpen=false;setEras(false)});addEventListener('resize',placeEras);placeEras();
 const q=new URLSearchParams(location.search);
 if(/demo=1/.test(location.search+location.hash)){L=7e8;R=-5e8;panel.style.transition="none";open(ev.findIndex(e=>e.n=="Dinosaur extinction"))}
 // arbitrary view for testing/screenshots: ?center=<yearsAgo>|?year=<CE year>&span=<years>
